@@ -1,0 +1,107 @@
+/* ============================================================
+   QuaDapt Dashboard — global styles
+   Ported (almost verbatim) from Dataset_Tab.reference.html.
+   The sketch is the source of truth for visual design.
+   ============================================================ */
+
+:root{
+  --bg:#0a0c0b; --card:#161917; --inset:#0f1210;
+  --bd:rgba(255,255,255,.06); --bd2:rgba(255,255,255,.09);
+  --t1:#eef1ec; --t2:#c8ccc6; --t3:#93998f; --t4:#5f665e; --lbl:#8b918a;
+  --mint:#74e0a3; --sage:#c3e29a; --green:#63c586; --amber:#e0a750;
+}
+*{box-sizing:border-box}
+html,body,#root{min-height:100%}
+body{margin:0;background:var(--bg);font-family:'Manrope',system-ui,sans-serif;-webkit-font-smoothing:antialiased;color:var(--t1)}
+.mono{font-family:'JetBrains Mono',monospace}
+.wrap{max-width:1240px;margin:0 auto;padding:36px 28px 60px}
+
+/* ---- tab nav ---- */
+.tabnav{display:flex;align-items:center;gap:6px;margin-bottom:24px}
+.tab{font-size:13px;font-weight:600;color:var(--t3);background:transparent;border:0;border-radius:9px;padding:8px 14px;cursor:pointer;transition:background .13s,color .13s}
+.tab:hover{color:var(--t2);background:rgba(255,255,255,.04)}
+.tab.active{color:var(--t1);background:var(--card);border:1px solid var(--bd2)}
+.tab:disabled{opacity:.45;cursor:not-allowed}
+.tab .soon{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--t4);margin-left:6px}
+
+/* ---- header ---- */
+.head{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px}
+.head-l{display:flex;align-items:center;gap:16px}
+h1{font-size:24px;font-weight:800;letter-spacing:-.01em;margin:0}
+.head-r{display:flex;align-items:center;gap:14px}
+.meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--t4)}
+
+/* ---- raw / preprocessed toggle ---- */
+.seg{display:flex;background:var(--inset);border:1px solid var(--bd);border-radius:10px;padding:3px}
+.seg button{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--t4);background:transparent;border:0;border-radius:7px;padding:6px 11px;cursor:pointer;transition:background .13s,color .13s}
+.seg button:hover:not(:disabled){color:var(--t2)}
+.seg button.on{background:var(--card);color:var(--mint)}
+.seg button:disabled{opacity:.4;cursor:not-allowed}
+
+/* ---- dataset selector + dropdown ---- */
+.selector{position:relative}
+.pill{display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--bd2);border-radius:11px;padding:9px 13px;cursor:pointer;user-select:none;transition:border-color .15s}
+.pill:hover{border-color:rgba(255,255,255,.16)}
+.pill .sw{width:16px;height:16px;border-radius:5px;background:var(--mint)}
+.pill .nm{font-size:13px;font-weight:600;white-space:nowrap}
+.pill .car{color:var(--t4);font-size:11px;transition:transform .18s}
+.selector.open .pill{border-color:rgba(116,224,163,.4)}
+.selector.open .car{transform:rotate(180deg)}
+
+.menu{position:absolute;top:calc(100% + 8px);left:0;width:340px;background:#181b19;border:1px solid var(--bd2);border-radius:14px;padding:8px;box-shadow:0 24px 60px -18px rgba(0,0,0,.8);z-index:20;max-height:460px;overflow:auto}
+.menu-h{display:flex;align-items:center;justify-content:space-between;padding:6px 8px 8px}
+.menu-h span{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--lbl)}
+.search{display:flex;align-items:center;gap:8px;background:var(--inset);border:1px solid var(--bd);border-radius:9px;padding:8px 11px;margin:0 2px 6px;position:sticky;top:0}
+.search input{border:0;background:transparent;outline:0;color:var(--t2);font-family:'Manrope';font-size:12px;width:100%}
+.search input::placeholder{color:var(--t4)}
+.grp{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--t4);padding:8px 10px 4px}
+.opt{display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:10px;cursor:pointer;transition:background .13s}
+.opt:hover{background:rgba(255,255,255,.04)}
+.opt.sel{background:rgba(116,224,163,.09)}
+.opt .oi{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;flex:none}
+.opt.sel .oi{background:rgba(116,224,163,.14)}
+.opt .ot{flex:1;min-width:0}
+.opt .on{font-size:13px;font-weight:700;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.opt.sel .on{color:var(--t1)}
+.opt .od{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--t4);margin-top:1px}
+.opt .ck{color:var(--mint);font-size:13px;opacity:0}
+.opt.sel .ck{opacity:1}
+.menu-empty{padding:16px 10px;font-size:12px;color:var(--t4);text-align:center}
+
+/* ---- grid + cards ---- */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:16px}
+.card.wide{grid-column:1/-1}
+.ch{display:flex;align-items:center;gap:10px}
+.ico{width:28px;height:28px;border-radius:8px;background:rgba(116,224,163,.12);display:flex;align-items:center;justify-content:center;flex:none}
+.ct{font-size:14px;font-weight:600}
+.csub{font-size:11px;font-weight:500;color:var(--t4);margin-top:2px}
+.lbl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--lbl)}
+.big{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.divt{border-top:1px solid var(--bd);padding-top:14px}
+.note{font-size:11px;font-weight:500;color:var(--t4)}
+.tag{font-size:10.5px;font-weight:600;border-radius:8px;padding:6px 11px}
+
+/* class bar */
+.cbar{height:42px;border-radius:10px;overflow:hidden;display:flex;background:var(--inset);gap:2px}
+.badge{font-size:11px;font-weight:600;color:var(--t2);background:var(--inset);border:1px solid var(--bd);border-radius:9px;padding:6px 11px}
+.badge b{color:var(--sage)}
+
+/* feature table */
+.ftab{display:grid;grid-template-columns:64px 1fr 76px 76px 76px 72px 62px;gap:8px 10px;align-items:center}
+.ftab .rb{height:7px;border-radius:4px;background:var(--inset)}
+.ftab .rb > i{display:block;height:100%;border-radius:4px}
+.num{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:var(--t3);text-align:right}
+.num.hi{color:var(--t1)}
+.fk{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--t2)}
+.ftab-scroll{max-height:520px;overflow:auto}
+
+/* stat primitive */
+.stat .lbl{margin-bottom:5px}
+
+/* states */
+.state{max-width:1240px;margin:0 auto;padding:80px 28px;color:var(--t3);font-size:14px}
+.state.err{color:var(--amber)}
+
+@media (max-width:1080px){ .grid{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:640px){ .grid{grid-template-columns:1fr} }

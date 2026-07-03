@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dataset · Characterization</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0c0b; --card:#161917; --inset:#0f1210;
+    --bd:rgba(255,255,255,.06); --bd2:rgba(255,255,255,.09);
+    --t1:#eef1ec; --t2:#c8ccc6; --t3:#93998f; --t4:#5f665e; --lbl:#8b918a;
+    --mint:#74e0a3; --sage:#c3e29a; --green:#63c586; --amber:#e0a750;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);font-family:'Manrope',system-ui,sans-serif;-webkit-font-smoothing:antialiased;color:var(--t1)}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .wrap{max-width:1240px;margin:0 auto;padding:36px 28px 60px}
+
+  /* ---- header ---- */
+  .head{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px}
+  .head-l{display:flex;align-items:center;gap:16px}
+  h1{font-size:24px;font-weight:800;letter-spacing:-.01em;margin:0}
+  .meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--t4)}
+
+  /* ---- dataset selector + dropdown ---- */
+  .selector{position:relative}
+  .pill{display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--bd2);border-radius:11px;padding:9px 13px;cursor:pointer;user-select:none;transition:border-color .15s}
+  .pill:hover{border-color:rgba(255,255,255,.16)}
+  .pill .sw{width:16px;height:16px;border-radius:5px;background:var(--mint)}
+  .pill .nm{font-size:13px;font-weight:600;white-space:nowrap}
+  .pill .car{color:var(--t4);font-size:11px;transition:transform .18s}
+  .selector.open .pill{border-color:rgba(116,224,163,.4)}
+  .selector.open .car{transform:rotate(180deg)}
+
+  .menu{position:absolute;top:calc(100% + 8px);left:0;width:320px;background:#181b19;border:1px solid var(--bd2);border-radius:14px;padding:8px;box-shadow:0 24px 60px -18px rgba(0,0,0,.8);z-index:20;
+    opacity:0;transform:translateY(-6px) scale(.985);pointer-events:none;transition:opacity .16s,transform .16s}
+  .selector.open .menu{opacity:1;transform:none;pointer-events:auto}
+  .menu-h{display:flex;align-items:center;justify-content:space-between;padding:6px 8px 8px}
+  .menu-h span{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--lbl)}
+  .search{display:flex;align-items:center;gap:8px;background:var(--inset);border:1px solid var(--bd);border-radius:9px;padding:8px 11px;margin:0 2px 6px}
+  .search input{border:0;background:transparent;outline:0;color:var(--t2);font-family:'Manrope';font-size:12px;width:100%}
+  .search input::placeholder{color:var(--t4)}
+  .opt{display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:10px;cursor:pointer;transition:background .13s}
+  .opt:hover{background:rgba(255,255,255,.04)}
+  .opt.sel{background:rgba(116,224,163,.09)}
+  .opt .oi{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;flex:none}
+  .opt.sel .oi{background:rgba(116,224,163,.14)}
+  .opt .ot{flex:1;min-width:0}
+  .opt .on{font-size:13px;font-weight:700;color:var(--t2)}
+  .opt.sel .on{color:var(--t1)}
+  .opt .od{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--t4);margin-top:1px}
+  .opt .ck{color:var(--mint);font-size:13px;opacity:0}
+  .opt.sel .ck{opacity:1}
+  .menu-f{border-top:1px solid var(--bd);margin-top:6px;padding-top:6px}
+  .addbtn{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:10px;cursor:pointer;color:var(--t3);font-size:12.5px;font-weight:600;transition:background .13s}
+  .addbtn:hover{background:rgba(255,255,255,.04);color:var(--t2)}
+
+  /* ---- grid + cards ---- */
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:16px}
+  .card.wide{grid-column:1/-1}
+  .ch{display:flex;align-items:center;gap:10px}
+  .ico{width:28px;height:28px;border-radius:8px;background:rgba(116,224,163,.12);display:flex;align-items:center;justify-content:center;flex:none}
+  .ct{font-size:14px;font-weight:600}
+  .csub{font-size:11px;font-weight:500;color:var(--t4);margin-top:2px}
+  .lbl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--lbl)}
+  .big{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1}
+  .divt{border-top:1px solid var(--bd);padding-top:14px}
+  .note{font-size:11px;font-weight:500;color:var(--t4)}
+  .tag{font-size:10.5px;font-weight:600;border-radius:8px;padding:6px 11px}
+
+  /* class bar */
+  .cbar{height:42px;border-radius:10px;overflow:hidden;display:flex;background:var(--inset);gap:2px}
+  .badge{font-size:11px;font-weight:600;color:var(--t2);background:var(--inset);border:1px solid var(--bd);border-radius:9px;padding:6px 11px}
+  .badge b{color:var(--sage)}
+
+  /* feature table */
+  .ftab{display:grid;grid-template-columns:64px 1fr 76px 76px 76px 72px 62px;gap:8px 10px;align-items:center}
+  .ftab .rb{height:7px;border-radius:4px;background:var(--inset)}
+  .ftab .rb > i{display:block;height:100%;border-radius:4px}
+  .num{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:var(--t3);text-align:right}
+  .num.hi{color:var(--t1)}
+  .fk{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--t2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="head">
+    <div class="head-l">
+      <h1>Datasets</h1>
+      <div class="selector open" id="selector">
+        <div class="pill" id="pill" onclick="toggleMenu(event)">
+          <span class="sw"></span>
+          <span class="nm" id="pillName">Shuttle (Statlog)</span>
+          <span class="car">&#9662;</span>
+        </div>
+        <div class="menu" id="menu">
+          <div class="menu-h"><span>Switch dataset</span><span class="mono" style="color:var(--t4)">5</span></div>
+          <div class="search">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="#5f665e" stroke-width="1.5"><circle cx="5.5" cy="5.5" r="4"/><path d="M9 9 12 12"/></svg>
+            <input type="text" placeholder="Search datasets">
+          </div>
+          <div class="opt sel" data-name="Shuttle (Statlog)" onclick="pick(this)">
+            <div class="oi"><svg width="15" height="15" viewBox="0 0 14 14" fill="#74e0a3"><rect x="0" y="0" width="6" height="6" rx="1.5"/><rect x="8" y="0" width="6" height="6" rx="1.5"/><rect x="0" y="8" width="6" height="6" rx="1.5"/><rect x="8" y="8" width="6" height="6" rx="1.5"/></svg></div>
+            <div class="ot"><div class="on">Shuttle (Statlog)</div><div class="od">58k &times; 9 &middot; 7 classes</div></div>
+            <span class="ck">&#10003;</span>
+          </div>
+          <div class="opt" data-name="Sensorless Drive" onclick="pick(this)">
+            <div class="oi"><svg width="15" height="15" viewBox="0 0 14 14" fill="#5f665e"><rect x="0" y="0" width="6" height="6" rx="1.5"/><rect x="8" y="0" width="6" height="6" rx="1.5"/><rect x="0" y="8" width="6" height="6" rx="1.5"/><rect x="8" y="8" width="6" height="6" rx="1.5"/></svg></div>
+            <div class="ot"><div class="on">Sensorless Drive</div><div class="od">58k &times; 48 &middot; 11 classes</div></div>
+            <span class="ck">&#10003;</span>
+          </div>
+          <div class="opt" data-name="Gas Sensor Array" onclick="pick(this)">
+            <div class="oi"><svg width="15" height="15" viewBox="0 0 14 14" fill="#5f665e"><rect x="0" y="0" width="6" height="6" rx="1.5"/><rect x="8" y="0" width="6" height="6" rx="1.5"/><rect x="0" y="8" width="6" height="6" rx="1.5"/><rect x="8" y="8" width="6" height="6" rx="1.5"/></svg></div>
+            <div class="ot"><div class="on">Gas Sensor Array</div><div class="od">14k &times; 128 &middot; 6 classes</div></div>
+            <span class="ck">&#10003;</span>
+          </div>
+          <div class="opt" data-name="Letter Recognition" onclick="pick(this)">
+            <div class="oi"><svg width="15" height="15" viewBox="0 0 14 14" fill="#5f665e"><rect x="0" y="0" width="6" height="6" rx="1.5"/><rect x="8" y="0" width="6" height="6" rx="1.5"/><rect x="0" y="8" width="6" height="6" rx="1.5"/><rect x="8" y="8" width="6" height="6" rx="1.5"/></svg></div>
+            <div class="ot"><div class="on">Letter Recognition</div><div class="od">20k &times; 16 &middot; 26 classes</div></div>
+            <span class="ck">&#10003;</span>
+          </div>
+          <div class="opt" data-name="Covertype" onclick="pick(this)">
+            <div class="oi"><svg width="15" height="15" viewBox="0 0 14 14" fill="#5f665e"><rect x="0" y="0" width="6" height="6" rx="1.5"/><rect x="8" y="0" width="6" height="6" rx="1.5"/><rect x="0" y="8" width="6" height="6" rx="1.5"/><rect x="8" y="8" width="6" height="6" rx="1.5"/></svg></div>
+            <div class="ot"><div class="on">Covertype</div><div class="od">581k &times; 54 &middot; 7 classes</div></div>
+            <span class="ck">&#10003;</span>
+          </div>
+          <div class="menu-f">
+            <div class="addbtn"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6.5 2v9M2 6.5h9"/></svg>Add dataset</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="meta">UCI &middot; ingested 4.2&nbsp;MB</span>
+  </div>
+
+  <!-- GRID -->
+  <div class="grid">
+
+    <!-- SIZE & SHAPE -->
+    <div class="card">
+      <div class="ch">
+        <div class="ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="#74e0a3"><rect x="0" y="0" width="6" height="6" rx="1.5"/><rect x="8" y="0" width="6" height="6" rx="1.5"/><rect x="0" y="8" width="6" height="6" rx="1.5"/><rect x="8" y="8" width="6" height="6" rx="1.5"/></svg></div>
+        <span class="ct">Size &amp; Shape</span>
+      </div>
+      <div>
+        <div class="lbl" style="margin-bottom:5px">Instances</div>
+        <div class="big">58,000</div>
+      </div>
+      <div class="divt" style="display:flex;gap:14px">
+        <div style="flex:1"><div class="lbl" style="margin-bottom:4px">Features</div><div style="font-size:16px;font-weight:700">9</div></div>
+        <div style="flex:1"><div class="lbl" style="margin-bottom:4px">Rows : Cols</div><div style="font-size:16px;font-weight:700">6,444<span style="color:var(--t4)">:1</span></div></div>
+      </div>
+      <div class="note">Tall &amp; narrow &mdash; abundant rows per feature.</div>
+    </div>
+
+    <!-- FEATURE COMPOSITION -->
+    <div class="card">
+      <div class="ch">
+        <div class="ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="#74e0a3"><rect x="0" y="1" width="14" height="3" rx="1.5"/><rect x="0" y="6" width="9" height="3" rx="1.5"/><rect x="0" y="11" width="5" height="3" rx="1.5"/></svg></div>
+        <span class="ct">Feature Composition</span>
+      </div>
+      <div style="height:10px;border-radius:6px;overflow:hidden;display:flex;background:var(--inset)"><div style="flex:1;background:var(--sage)"></div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 14px">
+        <div><div class="lbl" style="margin-bottom:3px">Numeric</div><div style="font-size:16px;font-weight:700">9</div></div>
+        <div><div class="lbl" style="margin-bottom:3px">Categorical</div><div style="font-size:16px;font-weight:700;color:var(--t4)">0</div></div>
+        <div><div class="lbl" style="margin-bottom:3px">Binary</div><div style="font-size:16px;font-weight:700;color:var(--t4)">0</div></div>
+        <div><div class="lbl" style="margin-bottom:3px">Constant</div><div style="font-size:16px;font-weight:700;color:var(--t4)">0</div></div>
+      </div>
+      <div class="note">All features continuous numeric.</div>
+    </div>
+
+    <!-- DATA QUALITY -->
+    <div class="card">
+      <div class="ch" style="justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#74e0a3" stroke-width="1.6"><path d="M7 1.5 12.5 7 7 12.5 1.5 7Z"/></svg></div>
+          <span class="ct">Data Quality</span>
+        </div>
+        <span class="tag" style="color:var(--amber);background:rgba(224,167,80,.14)">1 flag</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <div style="display:flex;align-items:center;justify-content:space-between"><div><div style="font-size:12px;font-weight:600;color:var(--t2)">Missing</div><div class="mono" style="font-size:10px;color:var(--t4)">0 cells</div></div><div style="font-size:15px;font-weight:700;color:var(--green)">0.0%</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between"><div><div style="font-size:12px;font-weight:600;color:var(--t2)">Duplicates</div><div class="mono" style="font-size:10px;color:var(--t4)">0.24% of rows</div></div><div style="font-size:15px;font-weight:700;color:var(--amber)">137</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between"><div><div style="font-size:12px;font-weight:600;color:var(--t2)">Malformed</div><div class="mono" style="font-size:10px;color:var(--t4)">parse errors</div></div><div style="font-size:15px;font-weight:700;color:var(--green)">0</div></div>
+      </div>
+    </div>
+
+    <!-- REDUNDANCY -->
+    <div class="card">
+      <div class="ch">
+        <div class="ico"><svg width="16" height="14" viewBox="0 0 16 14" fill="none" stroke="#74e0a3" stroke-width="1.5"><circle cx="6" cy="7" r="4.5"/><circle cx="10" cy="7" r="4.5"/></svg></div>
+        <span class="ct">Redundancy</span>
+      </div>
+      <div>
+        <div class="lbl" style="margin-bottom:5px">Avg pairwise |r|</div>
+        <div class="big">0.18</div>
+      </div>
+      <div class="divt">
+        <div class="lbl" style="margin-bottom:4px">Highly-correlated pairs</div>
+        <div style="font-size:16px;font-weight:700">3 <span class="mono" style="font-size:11px;font-weight:500;color:var(--t4)">|r| &gt; 0.9</span></div>
+      </div>
+    </div>
+
+    <!-- CLASS STRUCTURE -->
+    <div class="card wide" style="padding:22px 24px;gap:18px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div class="ch">
+          <div class="ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#74e0a3" stroke-width="1.5"><circle cx="7" cy="7" r="5.7"/><path d="M7 7 7 1.3M7 7 12 9.5"/></svg></div>
+          <div><span class="ct">Class Structure</span><div class="csub">7 classes &middot; severely imbalanced</div></div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <span class="badge">Entropy<sub style="color:var(--t4)">norm</sub> <b>0.34</b></span>
+          <span class="badge">Gini <b>0.36</b></span>
+          <span class="badge">Imbalance <b style="color:var(--amber)">7,598:1</b></span>
+        </div>
+      </div>
+      <div class="cbar">
+        <div title="Rad Flow 78.6%" style="flex:0 0 78.6%;background:#c3e29a"></div>
+        <div title="High 15.4%" style="flex:0 0 15.4%;background:#93cf9a"></div>
+        <div title="Bypass 5.6%" style="flex:0 0 5.6%;background:#6fbf9c"></div>
+        <div title="Fpv Close 0.23%" style="flex:0 0 6px;background:#4f9a86"></div>
+        <div title="Fpv Open 0.09%" style="flex:0 0 5px;background:#3f7a6f"></div>
+        <div title="Flux In 0.02%" style="flex:0 0 4px;background:#356258"></div>
+        <div title="Bpv Open 0.01%" style="flex:0 0 4px;background:#2c5049"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:12px">
+        <div style="display:flex;flex-direction:column;gap:4px"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:2px;background:#c3e29a"></span><span style="font-size:11px;font-weight:600;color:var(--t2)">Rad&nbsp;Flow</span></div><div style="font-size:14px;font-weight:700">45,586</div><div class="mono" style="font-size:10px;color:var(--t4)">78.6%</div></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:2px;background:#93cf9a"></span><span style="font-size:11px;font-weight:600;color:var(--t2)">High</span></div><div style="font-size:14px;font-weight:700">8,903</div><div class="mono" style="font-size:10px;color:var(--t4)">15.4%</div></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:2px;background:#6fbf9c"></span><span style="font-size:11px;font-weight:600;color:var(--t2)">Bypass</span></div><div style="font-size:14px;font-weight:700">3,267</div><div class="mono" style="font-size:10px;color:var(--t4)">5.6%</div></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:2px;background:#4f9a86"></span><span style="font-size:11px;font-weight:600;color:var(--t2)">Fpv&nbsp;Close</span></div><div style="font-size:14px;font-weight:700">132</div><div class="mono" style="font-size:10px;color:var(--t4)">0.23%</div></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:2px;background:#3f7a6f"></span><span style="font-size:11px;font-weight:600;color:var(--t2)">Fpv&nbsp;Open</span></div><div style="font-size:14px;font-weight:700">50</div><div class="mono" style="font-size:10px;color:var(--t4)">0.09%</div></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:2px;background:#356258"></span><span style="font-size:11px;font-weight:600;color:var(--t2)">Flux&nbsp;In</span></div><div style="font-size:14px;font-weight:700">11</div><div class="mono" style="font-size:10px;color:var(--t4)">0.02%</div></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:2px;background:#2c5049"></span><span style="font-size:11px;font-weight:600;color:var(--t2)">Bpv&nbsp;Open</span></div><div style="font-size:14px;font-weight:700">6</div><div class="mono" style="font-size:10px;color:var(--t4)">0.01%</div></div>
+      </div>
+    </div>
+
+    <!-- FEATURE STATISTICS -->
+    <div class="card wide" style="padding:22px 24px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div class="ch">
+          <div class="ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="#74e0a3"><rect x="0" y="6" width="3" height="8" rx="1"/><rect x="5.5" y="2" width="3" height="12" rx="1"/><rect x="11" y="9" width="3" height="5" rx="1"/></svg></div>
+          <div><span class="ct">Feature Statistics</span><div class="csub">9 numeric features &middot; ranges span 3+ orders of magnitude</div></div>
+        </div>
+        <span class="tag" style="color:var(--amber);background:rgba(224,167,80,.13);border:1px solid rgba(224,167,80,.25)">Normalization recommended</span>
+      </div>
+      <div class="ftab">
+        <div class="lbl">Feat</div>
+        <div class="lbl">Range (log)</div>
+        <div class="lbl" style="text-align:right">Min</div>
+        <div class="lbl" style="text-align:right">Max</div>
+        <div class="lbl" style="text-align:right">Mean</div>
+        <div class="lbl" style="text-align:right">Std</div>
+        <div class="lbl" style="text-align:right">Skew</div>
+
+        <div class="fk">f1</div><div class="rb"><i style="width:40%;background:#6fbf9c"></i></div><div class="num">27</div><div class="num">126</div><div class="num hi">79.9</div><div class="num">32.1</div><div class="num">-0.1</div>
+        <div class="fk">f2</div><div class="rb"><i style="width:100%;background:#c3e29a"></i></div><div class="num">-4,821</div><div class="num">5,075</div><div class="num hi">-0.3</div><div class="num">105.2</div><div class="num">2.4</div>
+        <div class="fk">f3</div><div class="rb"><i style="width:42%;background:#6fbf9c"></i></div><div class="num">21</div><div class="num">149</div><div class="num hi">84.9</div><div class="num">8.9</div><div class="num">0.3</div>
+        <div class="fk">f4</div><div class="rb"><i style="width:96%;background:#c3e29a"></i></div><div class="num">-3,939</div><div class="num">3,830</div><div class="num hi">-1.1</div><div class="num">78.4</div><div class="num">-1.8</div>
+        <div class="fk">f5</div><div class="rb"><i style="width:66%;background:#8fca97"></i></div><div class="num">-188</div><div class="num">436</div><div class="num hi">40.2</div><div class="num">55.1</div><div class="num">1.2</div>
+        <div class="fk">f6</div><div class="rb"><i style="width:92%;background:#c3e29a"></i></div><div class="num">-2,367</div><div class="num">2,977</div><div class="num hi">0.4</div><div class="num">62.9</div><div class="num">0.8</div>
+        <div class="fk">f7</div><div class="rb"><i style="width:64%;background:#8fca97"></i></div><div class="num">-353</div><div class="num">161</div><div class="num hi">44.7</div><div class="num">20.3</div><div class="num">-0.9</div>
+        <div class="fk">f8</div><div class="rb"><i style="width:95%;background:#c3e29a"></i></div><div class="num">-3,560</div><div class="num">3,134</div><div class="num hi">0.1</div><div class="num">38.5</div><div class="num">0.2</div>
+        <div class="fk">f9</div><div class="rb"><i style="width:90%;background:#c3e29a"></i></div><div class="num">-1,898</div><div class="num">2,846</div><div class="num hi">-2.1</div><div class="num">45.7</div><div class="num">1.1</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  var selector = document.getElementById('selector');
+  function toggleMenu(e){ e.stopPropagation(); selector.classList.toggle('open'); }
+  function pick(el){
+    document.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('sel'); });
+    el.classList.add('sel');
+    document.getElementById('pillName').textContent = el.getAttribute('data-name');
+    selector.classList.remove('open');
+    // swap the highlighted icon fill
+    document.querySelectorAll('.opt .oi svg').forEach(function(s){ s.setAttribute('fill','#5f665e'); });
+    el.querySelector('.oi svg').setAttribute('fill','#74e0a3');
+  }
+  document.addEventListener('click', function(e){
+    if(!selector.contains(e.target)) selector.classList.remove('open');
+  });
+</script>
+</body>
+</html>
