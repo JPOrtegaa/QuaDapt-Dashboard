@@ -11,7 +11,7 @@ export default function DatasetOption({ dataset, selected, onPick }) {
       </div>
       <div className="ot">
         <div className="on">{dataset.name}</div>
-        <div className="od">{optionDesc(dataset.raw)}</div>
+        <div className="od">{dataset.desc ?? optionDesc(dataset.raw)}</div>
       </div>
       <span className="ck">✓</span>
     </div>

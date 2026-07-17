@@ -1,0 +1,920 @@
+[
+  {
+    "id": "cirrhosis",
+    "name": "Cirrhosis",
+    "source": "kaggle",
+    "nClasses": 4,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "PWK",
+    "bestMeanAE": 0.1479,
+    "synWinRate": 0.7173,
+    "familiesImproved": 6,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "ACC",
+      "syn": "ACC_syn",
+      "deltaMeanAE": -0.2083
+    }
+  },
+  {
+    "id": "customer_segmentation",
+    "name": "Customer Segmentation",
+    "source": "kaggle",
+    "nClasses": 4,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.11,
+    "synWinRate": 0.7274,
+    "familiesImproved": 7,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "MS",
+      "syn": "MS_syn",
+      "deltaMeanAE": -0.2073
+    }
+  },
+  {
+    "id": "fashion_mnist",
+    "name": "Fashion-MNIST",
+    "source": "kaggle",
+    "nClasses": 10,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0173,
+    "synWinRate": 0.8357,
+    "familiesImproved": 8,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "MS",
+      "syn": "MS_syn",
+      "deltaMeanAE": -0.0567
+    }
+  },
+  {
+    "id": "healthcare",
+    "name": "Healthcare",
+    "source": "kaggle",
+    "nClasses": 11,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "PWK",
+    "bestMeanAE": 0.0642,
+    "synWinRate": 0.947,
+    "familiesImproved": 9,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.1047
+    }
+  },
+  {
+    "id": "iris",
+    "name": "Iris",
+    "source": "kaggle",
+    "nClasses": 3,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "PWK",
+    "bestMeanAE": 0.019,
+    "synWinRate": 0.4137,
+    "familiesImproved": 3,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.0409
+    }
+  },
+  {
+    "id": "music_genre",
+    "name": "Music Genre",
+    "source": "kaggle",
+    "nClasses": 11,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0378,
+    "synWinRate": 0.8408,
+    "familiesImproved": 9,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "MS",
+      "syn": "MS_syn",
+      "deltaMeanAE": -0.0995
+    }
+  },
+  {
+    "id": "predictive_maintenance",
+    "name": "Predictive Maintenance",
+    "source": "kaggle",
+    "nClasses": 6,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0595,
+    "synWinRate": 0.812,
+    "familiesImproved": 9,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.1593
+    }
+  },
+  {
+    "id": "star_classification",
+    "name": "Star Classification",
+    "source": "kaggle",
+    "nClasses": 3,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0161,
+    "synWinRate": 0.2622,
+    "familiesImproved": 1,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "PACC",
+      "syn": "PACC_syn",
+      "deltaMeanAE": -0.011
+    }
+  },
+  {
+    "id": "student_performance_data",
+    "name": "Student Performance",
+    "source": "kaggle",
+    "nClasses": 5,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0989,
+    "synWinRate": 0.8164,
+    "familiesImproved": 9,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "MS2",
+      "syn": "MS2_syn",
+      "deltaMeanAE": -0.1683
+    }
+  },
+  {
+    "id": "zoo",
+    "name": "Zoo",
+    "source": "kaggle",
+    "nClasses": 7,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0176,
+    "synWinRate": 0.6842,
+    "familiesImproved": 7,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.0395
+    }
+  },
+  {
+    "id": "dataset_44478_amazon",
+    "name": "Amazon Commerce (seed 0)",
+    "source": "openml",
+    "nClasses": 50,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "T50",
+    "bestMeanAE": 0.02,
+    "synWinRate": 0.6812,
+    "familiesImproved": 6,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "MAX",
+      "syn": "MAX_syn",
+      "deltaMeanAE": -0.019
+    }
+  },
+  {
+    "id": "dataset_44479_amazon",
+    "name": "Amazon Commerce (seed 1)",
+    "source": "openml",
+    "nClasses": 50,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "DyS",
+    "bestMeanAE": 0.02,
+    "synWinRate": 0.773,
+    "familiesImproved": 6,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.0193
+    }
+  },
+  {
+    "id": "dataset_44480_amazon",
+    "name": "Amazon Commerce (seed 2)",
+    "source": "openml",
+    "nClasses": 50,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "ACC_syn",
+    "bestMeanAE": 0.02,
+    "synWinRate": 0.7799,
+    "familiesImproved": 8,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.0194
+    }
+  },
+  {
+    "id": "dataset_44481_amazon",
+    "name": "Amazon Commerce (seed 3)",
+    "source": "openml",
+    "nClasses": 50,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "MAX",
+    "bestMeanAE": 0.02,
+    "synWinRate": 0.6721,
+    "familiesImproved": 6,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "X",
+      "syn": "X_syn",
+      "deltaMeanAE": -0.0193
+    }
+  },
+  {
+    "id": "dataset_44482_amazon",
+    "name": "Amazon Commerce (seed 4)",
+    "source": "openml",
+    "nClasses": 50,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "PACC",
+    "bestMeanAE": 0.02,
+    "synWinRate": 0.7594,
+    "familiesImproved": 6,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "MAX",
+      "syn": "MAX_syn",
+      "deltaMeanAE": -0.0191
+    }
+  },
+  {
+    "id": "fabert",
+    "name": "Fabert",
+    "source": "openml",
+    "nClasses": 7,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0349,
+    "synWinRate": 0.9114,
+    "familiesImproved": 9,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.1196
+    }
+  },
+  {
+    "id": "microaggregation2",
+    "name": "Microaggregation2",
+    "source": "openml",
+    "nClasses": 5,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0958,
+    "synWinRate": 0.7399,
+    "familiesImproved": 9,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.1818
+    }
+  },
+  {
+    "id": "avila",
+    "name": "Avila",
+    "source": "ours",
+    "nClasses": 12,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "PWK",
+    "bestMeanAE": 0.0229,
+    "synWinRate": 0.8923,
+    "familiesImproved": 9,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "MS2",
+      "syn": "MS2_syn",
+      "deltaMeanAE": -0.0803
+    }
+  },
+  {
+    "id": "chessgame",
+    "name": "Chess (King-Rook vs King)",
+    "source": "ours",
+    "nClasses": 18,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "PWK",
+    "bestMeanAE": 0.0247,
+    "synWinRate": 0.6848,
+    "familiesImproved": 9,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "MS2",
+      "syn": "MS2_syn",
+      "deltaMeanAE": -0.0487
+    }
+  },
+  {
+    "id": "covertype",
+    "name": "Covertype",
+    "source": "ours",
+    "nClasses": 7,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0667,
+    "synWinRate": 0.8888,
+    "familiesImproved": 9,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "MS2",
+      "syn": "MS2_syn",
+      "deltaMeanAE": -0.125
+    }
+  },
+  {
+    "id": "dermatology",
+    "name": "Dermatology",
+    "source": "ours",
+    "nClasses": 6,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0046,
+    "synWinRate": 0.2014,
+    "familiesImproved": 2,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "PACC",
+      "syn": "PACC_syn",
+      "deltaMeanAE": -0.0018
+    }
+  },
+  {
+    "id": "har",
+    "name": "HAR",
+    "source": "ours",
+    "nClasses": 6,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0052,
+    "synWinRate": 0.2112,
+    "familiesImproved": 3,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.0234
+    }
+  },
+  {
+    "id": "land_use",
+    "name": "Land Use",
+    "source": "ours",
+    "nClasses": 8,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.013,
+    "synWinRate": 0.6658,
+    "familiesImproved": 6,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.0738
+    }
+  },
+  {
+    "id": "mfeat",
+    "name": "Mfeat",
+    "source": "ours",
+    "nClasses": 10,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "PWK",
+    "bestMeanAE": 0.0313,
+    "synWinRate": 0.9516,
+    "familiesImproved": 9,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "MS2",
+      "syn": "MS2_syn",
+      "deltaMeanAE": -0.0773
+    }
+  },
+  {
+    "id": "mfeat_icdm21",
+    "name": "Mfeat (ICDM'21)",
+    "source": "ours",
+    "nClasses": 3,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0519,
+    "synWinRate": 0.662,
+    "familiesImproved": 7,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "ACC",
+      "syn": "ACC_syn",
+      "deltaMeanAE": -0.0933
+    }
+  },
+  {
+    "id": "mosquitoes",
+    "name": "Mosquitoes",
+    "source": "ours",
+    "nClasses": 6,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0087,
+    "synWinRate": 0.4486,
+    "familiesImproved": 3,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.0837
+    }
+  },
+  {
+    "id": "nursery",
+    "name": "Nursery",
+    "source": "ours",
+    "nClasses": 4,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.021,
+    "synWinRate": 0.6078,
+    "familiesImproved": 7,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.0568
+    }
+  },
+  {
+    "id": "phishingurl",
+    "name": "Phishing URL",
+    "source": "ours",
+    "nClasses": 5,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0161,
+    "synWinRate": 0.5734,
+    "familiesImproved": 4,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.0375
+    }
+  },
+  {
+    "id": "satimage",
+    "name": "Satimage",
+    "source": "ours",
+    "nClasses": 6,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0202,
+    "synWinRate": 0.6086,
+    "familiesImproved": 7,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.0674
+    }
+  },
+  {
+    "id": "walking",
+    "name": "Walking",
+    "source": "ours",
+    "nClasses": 22,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "PWK",
+    "bestMeanAE": 0.0216,
+    "synWinRate": 0.6331,
+    "familiesImproved": 6,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "ACC",
+      "syn": "ACC_syn",
+      "deltaMeanAE": -0.0104
+    }
+  },
+  {
+    "id": "academic_success",
+    "name": "Academic Success",
+    "source": "quapy",
+    "nClasses": 3,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0535,
+    "synWinRate": 0.5769,
+    "familiesImproved": 6,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "PACC",
+      "syn": "PACC_syn",
+      "deltaMeanAE": -0.055
+    }
+  },
+  {
+    "id": "digits",
+    "name": "Digits",
+    "source": "quapy",
+    "nClasses": 10,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0041,
+    "synWinRate": 0.2973,
+    "familiesImproved": 3,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.0441
+    }
+  },
+  {
+    "id": "dry_bean",
+    "name": "Dry Bean",
+    "source": "quapy",
+    "nClasses": 7,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0083,
+    "synWinRate": 0.3783,
+    "familiesImproved": 3,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.0721
+    }
+  },
+  {
+    "id": "letter",
+    "name": "Letter",
+    "source": "quapy",
+    "nClasses": 26,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "PWK",
+    "bestMeanAE": 0.0048,
+    "synWinRate": 0.7879,
+    "familiesImproved": 8,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "ACC",
+      "syn": "ACC_syn",
+      "deltaMeanAE": -0.0394
+    }
+  },
+  {
+    "id": "wine_quality",
+    "name": "Wine Quality",
+    "source": "quapy",
+    "nClasses": 7,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "DySyn",
+    "bestMeanAE": 0.096,
+    "synWinRate": 0.933,
+    "familiesImproved": 9,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.1382
+    }
+  },
+  {
+    "id": "bike_sharing_data",
+    "name": "Bike Sharing",
+    "source": "schumacher",
+    "nClasses": 4,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0518,
+    "synWinRate": 0.7824,
+    "familiesImproved": 9,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.1474
+    }
+  },
+  {
+    "id": "blog_feedback_data",
+    "name": "Blog Feedback",
+    "source": "schumacher",
+    "nClasses": 4,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0931,
+    "synWinRate": 0.7707,
+    "familiesImproved": 9,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "ACC",
+      "syn": "ACC_syn",
+      "deltaMeanAE": -0.2025
+    }
+  },
+  {
+    "id": "concrete_data",
+    "name": "Concrete",
+    "source": "schumacher",
+    "nClasses": 3,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0387,
+    "synWinRate": 0.5272,
+    "familiesImproved": 7,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "PACC",
+      "syn": "PACC_syn",
+      "deltaMeanAE": -0.0796
+    }
+  },
+  {
+    "id": "contraceptive_data",
+    "name": "Contraceptive",
+    "source": "schumacher",
+    "nClasses": 3,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0991,
+    "synWinRate": 0.6227,
+    "familiesImproved": 7,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "SMM",
+      "syn": "SMM_syn",
+      "deltaMeanAE": -0.0971
+    }
+  },
+  {
+    "id": "diamonds_data",
+    "name": "Diamonds",
+    "source": "schumacher",
+    "nClasses": 3,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.075,
+    "synWinRate": 0.6532,
+    "familiesImproved": 7,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "ACC",
+      "syn": "ACC_syn",
+      "deltaMeanAE": -0.1504
+    }
+  },
+  {
+    "id": "drugs_data",
+    "name": "Drugs",
+    "source": "schumacher",
+    "nClasses": 3,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0538,
+    "synWinRate": 0.7288,
+    "familiesImproved": 9,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "MS",
+      "syn": "MS_syn",
+      "deltaMeanAE": -0.117
+    }
+  },
+  {
+    "id": "energy_data",
+    "name": "Energy",
+    "source": "schumacher",
+    "nClasses": 3,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.1018,
+    "synWinRate": 0.6623,
+    "familiesImproved": 7,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.1196
+    }
+  },
+  {
+    "id": "fifa19_data",
+    "name": "FIFA 19",
+    "source": "schumacher",
+    "nClasses": 4,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0706,
+    "synWinRate": 0.771,
+    "familiesImproved": 7,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "ACC",
+      "syn": "ACC_syn",
+      "deltaMeanAE": -0.0816
+    }
+  },
+  {
+    "id": "theorem_data",
+    "name": "First-order Theorem Proving",
+    "source": "schumacher",
+    "nClasses": 5,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0802,
+    "synWinRate": 0.7188,
+    "familiesImproved": 7,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.0839
+    }
+  },
+  {
+    "id": "news_popularity_data",
+    "name": "News Popularity",
+    "source": "schumacher",
+    "nClasses": 4,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "PWK",
+    "bestMeanAE": 0.1436,
+    "synWinRate": 0.6992,
+    "familiesImproved": 7,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "MS",
+      "syn": "MS_syn",
+      "deltaMeanAE": -0.2213
+    }
+  },
+  {
+    "id": "skillcraft_data",
+    "name": "SkillCraft",
+    "source": "schumacher",
+    "nClasses": 3,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0551,
+    "synWinRate": 0.6477,
+    "familiesImproved": 7,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.0992
+    }
+  },
+  {
+    "id": "superconductor_data",
+    "name": "Superconductor",
+    "source": "schumacher",
+    "nClasses": 4,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0432,
+    "synWinRate": 0.8253,
+    "familiesImproved": 9,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "MS",
+      "syn": "MS_syn",
+      "deltaMeanAE": -0.1214
+    }
+  },
+  {
+    "id": "turk_student_eval_data",
+    "name": "Turkish Student Eval",
+    "source": "schumacher",
+    "nClasses": 3,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.137,
+    "synWinRate": 0.6027,
+    "familiesImproved": 6,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.2072
+    }
+  },
+  {
+    "id": "video_game_sales_data",
+    "name": "Video Game Sales",
+    "source": "schumacher",
+    "nClasses": 4,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0785,
+    "synWinRate": 0.7441,
+    "familiesImproved": 7,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.0724
+    }
+  },
+  {
+    "id": "yeast_data",
+    "name": "Yeast",
+    "source": "schumacher",
+    "nClasses": 4,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0831,
+    "synWinRate": 0.7813,
+    "familiesImproved": 7,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "ACC",
+      "syn": "ACC_syn",
+      "deltaMeanAE": -0.1093
+    }
+  },
+  {
+    "id": "wine",
+    "name": "Wine",
+    "source": "uci",
+    "nClasses": 3,
+    "nMethods": 32,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0158,
+    "synWinRate": 0.1689,
+    "familiesImproved": 1,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "PACC",
+      "syn": "PACC_syn",
+      "deltaMeanAE": -0.0109
+    }
+  }
+]

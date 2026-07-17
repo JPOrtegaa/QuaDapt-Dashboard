@@ -33,6 +33,7 @@ export function useDatasets() {
 
 // Human-friendly source label for group headers / meta line.
 export const SOURCE_LABEL = {
+  _general: 'Overview',
   kaggle: 'Kaggle',
   uci: 'UCI',
   quapy: 'QuaPy',

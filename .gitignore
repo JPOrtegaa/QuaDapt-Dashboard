@@ -147,3 +147,4 @@ __pycache__/
 *.py[cod]
 
 /datasets
+/results
