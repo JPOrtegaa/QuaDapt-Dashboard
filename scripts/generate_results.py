@@ -48,6 +48,7 @@ GROUP_SOURCE = {
 # Nicer display names for the ids this script derives (folder / file-prefix
 # based). Anything not listed here falls back to a naive title-cased humanize.
 NAME_OVERRIDES = {
+    "dataset_313_spectrometer": "Spectrometer",
     "iris": "Iris",
     "student_performance_data": "Student Performance",
     "cirrhosis": "Cirrhosis",
@@ -311,6 +312,7 @@ DATASETS_JSON = os.path.join(ROOT, "public", "data", "datasets.json")
 
 # results id -> datasets.json id, where slugify diverges from the catalog id.
 ID_CROSSWALK = {
+    "dataset_313_spectrometer": "spectrometer",
     "student_performance_data": "student_performance",
     "phishingurl": "phishing_url",
     "dataset_44478_amazon": "amazon_seed_0",

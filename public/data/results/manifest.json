@@ -306,6 +306,24 @@
     }
   },
   {
+    "id": "dataset_313_spectrometer",
+    "name": "Spectrometer",
+    "source": "openml",
+    "nClasses": 18,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "PWK",
+    "bestMeanAE": 0.0357,
+    "synWinRate": 0.8216,
+    "familiesImproved": 8,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "X",
+      "syn": "X_syn",
+      "deltaMeanAE": -0.0444
+    }
+  },
+  {
     "id": "avila",
     "name": "Avila",
     "source": "ours",
