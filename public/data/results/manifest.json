@@ -270,6 +270,42 @@
     }
   },
   {
+    "id": "dataset_4552_bachchoralharmony",
+    "name": "Bach Choral Harmony",
+    "source": "openml",
+    "nClasses": 53,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0102,
+    "synWinRate": 0.5489,
+    "familiesImproved": 6,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "MAX",
+      "syn": "MAX_syn",
+      "deltaMeanAE": -0.008
+    }
+  },
+  {
+    "id": "fars",
+    "name": "FARS",
+    "source": "openml",
+    "nClasses": 7,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "EMQ",
+    "bestMeanAE": 0.0568,
+    "synWinRate": 0.888,
+    "familiesImproved": 9,
+    "nFamilies": 9,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": -0.1292
+    }
+  },
+  {
     "id": "fabert",
     "name": "Fabert",
     "source": "openml",
