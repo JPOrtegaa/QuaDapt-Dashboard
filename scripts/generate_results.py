@@ -1,9 +1,9 @@
 """
 Generate the Results-tab data artifacts for the QuaDapt Dashboard.
 
-Scans results/ovr_results2/<group>/<dataset>/<dataset>_results.csv (raw
-QuaDapt experiment outputs, copied into this repo but not committed — see
-.gitignore) and, for every dataset, computes:
+Scans every experiment run listed in EXPERIMENTS (raw QuaDapt outputs copied
+into results/<run>/ but not committed — see .gitignore) and, for every dataset
+in every run, computes:
 
   * per-sample absolute error (AE), from the *_p_normalized columns against
     the *_real (true prevalence) columns — mean absolute error across classes
@@ -15,11 +15,14 @@ QuaDapt experiment outputs, copied into this repo but not committed — see
   * calibration points (true vs. estimated prevalence) for a bounded set of
     methods (the base/*_syn family members plus the single best method)
 
-Output: one JSON per dataset under results/generated/<id>.json, plus a
-manifest.json listing all datasets. scripts/copy-results.mjs copies these
-into public/data/results/ so Vite serves them statically.
+Output, per experiment: one JSON per dataset under
+results/generated/<experiment>/<id>.json, plus that experiment's manifest.json
+and general.json. A results/generated/experiments.json indexes the runs and
+drives the Results-tab experiment switcher. scripts/copy-results.mjs copies the
+whole tree into public/data/results/ so Vite serves it statically.
 
-Usage:  python scripts/generate_results.py
+Usage:  python scripts/generate_results.py [experiment-id ...]
+        (no args = every experiment whose raw folder is present)
 """
 
 from __future__ import annotations
@@ -28,13 +31,38 @@ import json
 import math
 import os
 import re
+import shutil
+import sys
 
 import numpy as np
 import pandas as pd
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RESULTS_DIR = os.path.join(ROOT, "results", "ovr_results2")
+RESULTS_DIR = os.path.join(ROOT, "results")
 OUT_DIR = os.path.join(ROOT, "results", "generated")
+
+# Every experiment run the dashboard can show, newest first — this is also the
+# order of the Results-tab switcher, whose default is the first entry.
+#   dir    raw run folder under results/ (not committed)
+#   layout "grouped" -> <dir>/<source>/<dataset>/<dataset>_results.csv
+#          "flat"    -> <dir>/<dataset>/<dataset>_results.csv, with the source
+#                       resolved per dataset id through DATASET_SOURCE
+EXPERIMENTS = [
+    {
+        "id": "ovr_corrected",
+        "name": "OvR corrected",
+        "dir": "ovr_results_corrected",
+        "layout": "flat",
+        "desc": "Corrected One-vs-Rest run",
+    },
+    {
+        "id": "ovr_v2",
+        "name": "OvR v2",
+        "dir": "ovr_results2",
+        "layout": "grouped",
+        "desc": "Previous One-vs-Rest run",
+    },
+]
 
 GROUP_SOURCE = {
     "kaggle": "kaggle",
@@ -43,6 +71,81 @@ GROUP_SOURCE = {
     "openml": "openml",
     "ours": "ours",
     "schumacher_cdt": "schumacher",
+}
+
+# Flat runs carry no source folder, so the catalog source is pinned per dataset
+# id (the slugified *_results.csv prefix). Unlisted ids fall back to "other".
+DATASET_SOURCE = {
+    # kaggle
+    "cirrhosis": "kaggle",
+    "customer_segmentation": "kaggle",
+    "fashion_mnist": "kaggle",
+    "healthcare": "kaggle",
+    "iris": "kaggle",
+    "music_genre": "kaggle",
+    "predictive_maintenance": "kaggle",
+    "star_classification": "kaggle",
+    "student_performance_data": "kaggle",
+    "zoo": "kaggle",
+    # uci
+    "uci_42123_article_influence": "uci",
+    "wine": "uci",
+    # quapy
+    "academic_success": "quapy",
+    "digits": "quapy",
+    "dry_bean": "quapy",
+    "letter": "quapy",
+    "wine_quality": "quapy",
+    # openml
+    "dataset_313_spectrometer": "openml",
+    "dataset_1457_amazon": "openml",
+    "dataset_1491_one_hundred_plants_margin": "openml",
+    "dataset_1492_one_hundred_plants_shape": "openml",
+    "dataset_1493_one_hundred_plants_texture": "openml",
+    "dataset_44478_amazon": "openml",
+    "dataset_44479_amazon": "openml",
+    "dataset_44480_amazon": "openml",
+    "dataset_44481_amazon": "openml",
+    "dataset_44482_amazon": "openml",
+    "dataset_4552_bachchoralharmony": "openml",
+    "fabert": "openml",
+    "fars": "openml",
+    "microaggregation2": "openml",
+    # ours
+    "avila": "ours",
+    "chessgame": "ours",
+    "covertype": "ours",
+    "dermatology": "ours",
+    "har": "ours",
+    "land_use": "ours",
+    "mfeat": "ours",
+    "mfeat_icdm21": "ours",
+    "mosquitoes": "ours",
+    "nursery": "ours",
+    "phishingurl": "ours",
+    "satimage": "ours",
+    "walking": "ours",
+    # schumacher
+    "bike_sharing_data": "schumacher",
+    "blog_feedback_data": "schumacher",
+    "concrete_data": "schumacher",
+    "contraceptive_data": "schumacher",
+    "diamonds_data": "schumacher",
+    "drugs_data": "schumacher",
+    "energy_data": "schumacher",
+    "fifa19_data": "schumacher",
+    "news_popularity_data": "schumacher",
+    "skillcraft_data": "schumacher",
+    "superconductor_data": "schumacher",
+    "theorem_data": "schumacher",
+    "turk_student_eval_data": "schumacher",
+    "video_game_sales_data": "schumacher",
+    "yeast_data": "schumacher",
+    # synthetic
+    "global_covariate_shift2": "synthetic",
+    "horizontal_mix": "synthetic",
+    "label_shift_1_1": "synthetic",
+    "label_shift_5_5": "synthetic",
 }
 
 # Nicer display names for the ids this script derives (folder / file-prefix
@@ -97,6 +200,15 @@ NAME_OVERRIDES = {
     "turk_student_eval_data": "Turkish Student Eval",
     "video_game_sales_data": "Video Game Sales",
     "yeast_data": "Yeast",
+    "global_covariate_shift2": "Global Covariate Shift 2",
+    "horizontal_mix": "Horizontal Mix",
+    "label_shift_1_1": "Label Shift (1,1)",
+    "label_shift_5_5": "Label Shift (5,5)",
+    "uci_42123_article_influence": "Article Influence",
+    "dataset_1457_amazon": "Amazon Commerce Reviews",
+    "dataset_1491_one_hundred_plants_margin": "One-hundred Plants (margin)",
+    "dataset_1492_one_hundred_plants_shape": "One-hundred Plants (shape)",
+    "dataset_1493_one_hundred_plants_texture": "One-hundred Plants (texture)",
 }
 
 for _seed in range(5):
@@ -118,12 +230,16 @@ def humanize(id_: str) -> str:
     return id_.replace("_", " ").title()
 
 
-def find_result_csvs():
-    for dirpath, _dirnames, filenames in os.walk(RESULTS_DIR):
+def find_result_csvs(raw_dir: str, layout: str):
+    """Yield (group, csv_path) for one run. `group` is the source folder for a
+    grouped layout, None for a flat one (resolved per dataset id instead)."""
+    for dirpath, _dirnames, filenames in os.walk(raw_dir):
         for fn in filenames:
             if fn.endswith("_results.csv"):
-                rel = os.path.relpath(dirpath, RESULTS_DIR)
-                group = rel.split(os.sep)[0]
+                group = None
+                if layout == "grouped":
+                    rel = os.path.relpath(dirpath, raw_dir)
+                    group = rel.split(os.sep)[0]
                 yield group, os.path.join(dirpath, fn)
 
 
@@ -137,11 +253,11 @@ def clean(x, ndigits=4):
     return round(xf, ndigits)
 
 
-def compute_dataset(group: str, csv_path: str) -> dict | None:
+def compute_dataset(group: str | None, csv_path: str) -> dict | None:
     fname = os.path.basename(csv_path)
     prefix = fname[: -len("_results.csv")]
     id_ = slugify(prefix)
-    source = GROUP_SOURCE.get(group, group)
+    source = GROUP_SOURCE.get(group, group) if group else DATASET_SOURCE.get(id_, "other")
     name = humanize(id_)
 
     df = pd.read_csv(csv_path)
@@ -501,37 +617,87 @@ def build_general(records, datasets_meta):
     }
 
 
-def main():
-    os.makedirs(OUT_DIR, exist_ok=True)
-    datasets_meta = load_datasets_meta()
+def build_experiment(exp: dict, datasets_meta: dict) -> dict | None:
+    """Generate one run's artifacts under results/generated/<id>/.
+    Returns its experiments.json index entry, or None if its raw folder is
+    absent (a run someone else generated — leave whatever is on disk alone)."""
+    raw_dir = os.path.join(RESULTS_DIR, exp["dir"])
+    if not os.path.isdir(raw_dir):
+        print(f"! skip {exp['id']}: results/{exp['dir']}/ not present")
+        return None
+
+    out_dir = os.path.join(OUT_DIR, exp["id"])
+    shutil.rmtree(out_dir, ignore_errors=True)
+    os.makedirs(out_dir, exist_ok=True)
+
+    print(f"\n=== {exp['id']} ({exp['name']}) — results/{exp['dir']}/ ===")
     manifest = []
     general_records = []
-    count = 0
-    for group, csv_path in sorted(find_result_csvs()):
-        rel = os.path.relpath(csv_path, RESULTS_DIR)
+    for group, csv_path in sorted(find_result_csvs(raw_dir, exp["layout"])):
+        rel = os.path.relpath(csv_path, raw_dir)
         print(f"  {rel} ...", flush=True)
         result = compute_dataset(group, csv_path)
         if result is None:
             continue
         dataset, manifest_entry, general_record = result
-        out_path = os.path.join(OUT_DIR, f"{dataset['id']}.json")
+        out_path = os.path.join(out_dir, f"{dataset['id']}.json")
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(dataset, f, separators=(",", ":"))
         manifest.append(manifest_entry)
         general_records.append(general_record)
-        count += 1
 
     manifest.sort(key=lambda d: (d["source"], d["name"]))
-    with open(os.path.join(OUT_DIR, "manifest.json"), "w", encoding="utf-8") as f:
+    with open(os.path.join(out_dir, "manifest.json"), "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)
 
     general = build_general(general_records, datasets_meta)
-    with open(os.path.join(OUT_DIR, "general.json"), "w", encoding="utf-8") as f:
+    with open(os.path.join(out_dir, "general.json"), "w", encoding="utf-8") as f:
         json.dump(general, f, separators=(",", ":"))
 
     joined = sum(1 for r in general_records if crosswalk(r["id"]) in datasets_meta)
-    print(f"\nWrote {count} datasets to {OUT_DIR}")
-    print(f"  general.json: {count} datasets, {joined} joined to datasets.json metadata")
+    print(f"  wrote {len(manifest)} datasets to {out_dir}")
+    print(f"  general.json: {len(manifest)} datasets, {joined} joined to datasets.json metadata")
+
+    return {
+        "id": exp["id"],
+        "name": exp["name"],
+        "desc": exp["desc"],
+        "nDatasets": len(manifest),
+    }
+
+
+def main():
+    wanted = sys.argv[1:]
+    known = {e["id"] for e in EXPERIMENTS}
+    for w in wanted:
+        if w not in known:
+            sys.exit(f"unknown experiment {w!r}; known: {', '.join(sorted(known))}")
+    selected = [e for e in EXPERIMENTS if not wanted or e["id"] in wanted]
+
+    os.makedirs(OUT_DIR, exist_ok=True)
+    datasets_meta = load_datasets_meta()
+
+    built = {e["id"]: e for e in (build_experiment(exp, datasets_meta) for exp in selected) if e}
+
+    # Keep the runs that were not rebuilt this pass but are already on disk, so
+    # a partial run (`generate_results.py ovr_v2`) doesn't drop them from the
+    # switcher. EXPERIMENTS order is the display order.
+    index = []
+    for exp in EXPERIMENTS:
+        if exp["id"] in built:
+            index.append(built[exp["id"]])
+            continue
+        manifest_path = os.path.join(OUT_DIR, exp["id"], "manifest.json")
+        if os.path.exists(manifest_path):
+            with open(manifest_path, encoding="utf-8") as f:
+                n = len(json.load(f))
+            index.append({"id": exp["id"], "name": exp["name"], "desc": exp["desc"], "nDatasets": n})
+
+    with open(os.path.join(OUT_DIR, "experiments.json"), "w", encoding="utf-8") as f:
+        json.dump(index, f, indent=2)
+
+    summary = ", ".join(f"{e['id']} ({e['nDatasets']})" for e in index) or "none"
+    print(f"\nexperiments.json: {summary}")
 
 
 if __name__ == "__main__":

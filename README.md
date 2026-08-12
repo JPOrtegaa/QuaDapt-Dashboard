@@ -26,4 +26,32 @@ pip install pandas numpy scikit-learn scipy
 npm run data       # python scripts/generate_datasets.py + copy into public/data
 ```
 
+The Results tab reads one artifact set **per experiment run**, under
+`public/data/results/`:
+
+```
+public/data/results/
+├── experiments.json          # the run index — order = switcher order, first = default
+├── ovr_corrected/            # "OvR corrected"  <- results/ovr_results_corrected/
+│   ├── manifest.json         #   one entry per dataset (KPIs for the selector)
+│   ├── general.json          #   cross-dataset overview
+│   └── <dataset>.json        #   per-dataset methods / families / calibration
+└── ovr_v2/                   # "OvR v2"         <- results/ovr_results2/
+    └── …
+```
+
+A run is declared in the `EXPERIMENTS` list at the top of
+`scripts/generate_results.py` (id, display name, raw folder under `results/`, and
+whether that folder is `grouped` by source or `flat`; flat runs get their source
+from `DATASET_SOURCE`). Drop the raw run folder into `results/`, add its entry,
+then:
+
+```bash
+npm run data:results               # regenerate every run present + copy into public/data
+python scripts/generate_results.py ovr_corrected   # or just one run
+```
+
+The Results tab's experiment switcher (top right) then lets you flip which run
+feeds the whole tab.
+
 See `CLAUDE.md` and `SPEC.md` for the architecture and the `datasets.json` contract.

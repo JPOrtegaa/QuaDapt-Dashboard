@@ -1,0 +1,14 @@
+[
+  {
+    "id": "ovr_corrected",
+    "name": "OvR corrected",
+    "desc": "Corrected One-vs-Rest run",
+    "nDatasets": 57
+  },
+  {
+    "id": "ovr_v2",
+    "name": "OvR v2",
+    "desc": "Previous One-vs-Rest run",
+    "nDatasets": 54
+  }
+]

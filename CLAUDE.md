@@ -24,8 +24,10 @@ method (One-vs-Rest, n binary detectors). This repo is the **dashboard only**.
   `dist/`). No backend, no runtime Node server. Node is a build-time dependency only.
 - **Data flow:**
   - Datasets tab ← a single `datasets.json` (committed under `public/data/`).
-  - Results tab (future) ← QuaDapt result **CSV** files dropped into `public/data/`, parsed
-    client-side with `papaparse` (or pre-converted to JSON by the same Python step).
+  - Results tab ← per-experiment JSON artifacts under `public/data/results/<experiment>/`,
+    precomputed from the raw run CSVs by `scripts/generate_results.py`. Runs are declared
+    in that script's `EXPERIMENTS` list and indexed by `public/data/results/experiments.json`;
+    the tab's experiment switcher picks which run feeds it.
 - **Update model:** regenerate/drop in a new artifact → rebuild. Static output hosts
   anywhere (e.g. GitHub Pages).
 

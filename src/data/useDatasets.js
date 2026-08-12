@@ -40,4 +40,6 @@ export const SOURCE_LABEL = {
   openml: 'OpenML',
   ours: 'Ours',
   schumacher: 'Schumacher',
+  synthetic: 'Synthetic',
+  other: 'Other',
 }

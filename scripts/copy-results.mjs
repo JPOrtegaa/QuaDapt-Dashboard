@@ -1,5 +1,7 @@
-// Copy the generated Results-tab artifacts into public/data/results so Vite serves them.
-import { mkdirSync, copyFileSync, readdirSync, rmSync } from 'node:fs'
+// Copy the generated Results-tab artifacts into public/data/results so Vite
+// serves them. The tree is results/generated/{experiments.json, <experiment>/*.json}
+// — one subfolder per experiment run (see scripts/generate_results.py).
+import { mkdirSync, copyFileSync, readdirSync, rmSync, statSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -7,11 +9,21 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const srcDir = resolve(root, 'results/generated')
 const dstDir = resolve(root, 'public/data/results')
 
-rmSync(dstDir, { recursive: true, force: true })
-mkdirSync(dstDir, { recursive: true })
-
-const files = readdirSync(srcDir).filter((f) => f.endsWith('.json'))
-for (const f of files) {
-  copyFileSync(resolve(srcDir, f), resolve(dstDir, f))
+// Copy every .json under `from`, recursing into the per-experiment folders.
+function copyJson(from, to) {
+  mkdirSync(to, { recursive: true })
+  let n = 0
+  for (const entry of readdirSync(from)) {
+    const src = resolve(from, entry)
+    if (statSync(src).isDirectory()) n += copyJson(src, resolve(to, entry))
+    else if (entry.endsWith('.json')) {
+      copyFileSync(src, resolve(to, entry))
+      n++
+    }
+  }
+  return n
 }
-console.log(`copied ${files.length} files ${srcDir} -> ${dstDir}`)
+
+rmSync(dstDir, { recursive: true, force: true })
+const count = copyJson(srcDir, dstDir)
+console.log(`copied ${count} files ${srcDir} -> ${dstDir}`)
