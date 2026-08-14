@@ -1,28 +1,11 @@
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ErrorBar, LabelList, ResponsiveContainer,
 } from 'recharts'
+import MethodTick from './MethodTick'
 import { MINT, GREY } from '../../lib/resultsDerive'
 import { fmtAE } from '../../lib/resultsFormat'
 
 const ROW_H = 21
-
-function MethodTick({ x, y, payload, synSet }) {
-  const isSyn = synSet.has(payload.value)
-  return (
-    <text
-      x={x}
-      y={y}
-      dy={4}
-      textAnchor="end"
-      fontFamily="'JetBrains Mono',monospace"
-      fontSize={10.5}
-      fontWeight={isSyn ? 700 : 500}
-      fill={isSyn ? '#eef1ec' : '#93998f'}
-    >
-      {payload.value}
-    </text>
-  )
-}
 
 function RankTooltip({ active, payload }) {
   if (!active || !payload?.length) return null

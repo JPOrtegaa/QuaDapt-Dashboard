@@ -5,12 +5,14 @@ import MetadataScatterCard from './MetadataScatterCard'
 import PredictorRankingCard from './PredictorRankingCard'
 import FamilyHeatmapCard from './FamilyHeatmapCard'
 import GlobalMethodRankCard from './GlobalMethodRankCard'
+import GlobalMethodAECard from './GlobalMethodAECard'
 
 // The cross-dataset "General" overview: aggregate KPIs, the win leaderboard,
 // the metadata scatter + predictor ranking (linked by a shared axis), the
-// dataset×family heatmap, and the global method ranking. `onPickDataset`
-// drills from any dataset mark back into its per-dataset results.
-export default function GeneralView({ general, onPickDataset }) {
+// dataset×family heatmap, and the two global method rankings (by rank, and
+// by mean AE with its cross-run compare). `onPickDataset` drills from any
+// dataset mark back into its per-dataset results.
+export default function GeneralView({ general, onPickDataset, compare }) {
   const [axisKey, setAxisKey] = useState(
     general.summary.topPredictor?.key ?? general.metadataFields[0].key,
   )
@@ -36,6 +38,8 @@ export default function GeneralView({ general, onPickDataset }) {
         <FamilyHeatmapCard general={general} onPickDataset={onPickDataset} />
 
         <GlobalMethodRankCard general={general} />
+
+        <GlobalMethodAECard general={general} {...compare} />
       </div>
     </>
   )

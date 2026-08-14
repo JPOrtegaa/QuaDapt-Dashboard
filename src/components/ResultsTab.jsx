@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import DatasetSelector from './DatasetSelector'
 import ResultsKPIRow from './results/ResultsKPIRow'
 import MethodRankingCard from './results/MethodRankingCard'
@@ -7,7 +7,10 @@ import PrevalenceShiftCard from './results/PrevalenceShiftCard'
 import ClassHeatmapCard from './results/ClassHeatmapCard'
 import GeneralView from './results/general/GeneralView'
 import ExperimentSelector from './results/ExperimentSelector'
-import { useExperiments, useResultsManifest, useResultDataset, useGeneral } from '../data/useResults'
+import {
+  useExperiments, useResultsManifest, useResultDataset, useGeneral,
+  useDatasetAcrossRuns, useGeneralAcrossRuns,
+} from '../data/useResults'
 import { fmtSamples } from '../lib/resultsFormat'
 
 const GENERAL_ID = '__general__'
@@ -47,6 +50,15 @@ export default function ResultsTab() {
     activeExperimentId,
     isGeneral ? null : activeId,
   )
+
+  // Cross-run compare, shared by the per-dataset ranking card and the General
+  // aggregate card so the toggle reads the same in both places. Only the
+  // relevant one fetches — the other stays idle.
+  const [compareMode, setCompareMode] = useState('single')
+  const experimentIds = experiments.map((e) => e.id)
+  const comparing = compareMode === 'compare'
+  const datasetRuns = useDatasetAcrossRuns(experimentIds, isGeneral ? null : activeId, comparing)
+  const generalRuns = useGeneralAcrossRuns(experimentIds, comparing && isGeneral)
 
   if (eStatus === 'error') return <div className="state err">Failed to load data/results/experiments.json — {eError}</div>
   if (eStatus === 'loading' || mStatus === 'loading') return <div className="state">Loading results…</div>
@@ -99,7 +111,18 @@ export default function ResultsTab() {
       )}
 
       {isGeneral && gStatus === 'ready' && general && (
-        <GeneralView general={general} onPickDataset={setSelectedId} />
+        <GeneralView
+          general={general}
+          onPickDataset={setSelectedId}
+          compare={{
+            mode: compareMode,
+            onModeChange: setCompareMode,
+            experiments,
+            referenceId: activeExperimentId,
+            byRun: generalRuns.byRun,
+            compareStatus: generalRuns.status,
+          }}
+        />
       )}
 
       {!isGeneral && manifestEntry && <ResultsKPIRow manifest={manifestEntry} />}
@@ -119,6 +142,13 @@ export default function ResultsTab() {
               methods={dataset.methods}
               selectedMethod={activeMethod}
               onSelectMethod={setSelectedMethod}
+              mode={compareMode}
+              onModeChange={setCompareMode}
+              experiments={experiments}
+              referenceId={activeExperimentId}
+              byRun={datasetRuns.byRun}
+              missingRuns={datasetRuns.missingRuns}
+              compareStatus={datasetRuns.status}
             />
 
             <FamilyCompareCard

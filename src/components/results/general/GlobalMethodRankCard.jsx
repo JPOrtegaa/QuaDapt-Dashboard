@@ -3,19 +3,10 @@ import {
 } from 'recharts'
 import Card from '../../Card'
 import { BarsIcon } from '../../Icons'
+import MethodTick from '../MethodTick'
 import { MINT, GREY } from '../../../lib/resultsDerive'
 
 const ROW_H = 19
-
-function MethodTick({ x, y, payload, synSet }) {
-  const isSyn = synSet.has(payload.value)
-  return (
-    <text x={x} y={y} dy={4} textAnchor="end" fontFamily="'JetBrains Mono',monospace"
-      fontSize={10} fontWeight={isSyn ? 700 : 500} fill={isSyn ? '#eef1ec' : '#93998f'}>
-      {payload.value}
-    </text>
-  )
-}
 
 function RankTooltip({ active, payload, total }) {
   if (!active || !payload?.length) return null
@@ -67,7 +58,7 @@ export default function GlobalMethodRankCard({ general }) {
               tickLine={false}
               axisLine={false}
               interval={0}
-              tick={<MethodTick synSet={synSet} />}
+              tick={<MethodTick synSet={synSet} fontSize={10} />}
             />
             <Tooltip content={<RankTooltip total={general.nDatasets} />} cursor={{ fill: 'rgba(255,255,255,.04)' }} />
             <Bar dataKey="meanRank" radius={[0, 3, 3, 0]} maxBarSize={11} isAnimationActive animationDuration={700}>

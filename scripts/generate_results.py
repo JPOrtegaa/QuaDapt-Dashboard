@@ -432,6 +432,7 @@ def compute_dataset(group: str | None, csv_path: str) -> dict | None:
         "perFamilyDelta": {f["base"]: f["deltaMeanAE"] for f in families},
         # methods_out is sorted best -> worst, so position is the rank (1-based)
         "methodRanks": {m["name"]: i + 1 for i, m in enumerate(methods_out)},
+        "methodMeanAE": {m["name"]: m["meanAE"] for m in methods_out},
         "prior": {
             "entropyNorm": clean(prior_entropy_norm, 3),
             "gini": clean(prior_gini, 3),
@@ -617,6 +618,16 @@ def build_general(records, datasets_meta):
     ]
     method_ranking.sort(key=lambda m: m["meanRank"])
 
+    # Per-method x per-dataset mean AE. Runs don't share a dataset list, so the
+    # cross-run compare has to aggregate over whatever subset two runs have in
+    # common — that's only possible if the matrix ships un-aggregated. Column
+    # order mirrors `datasets` above; a method missing from a dataset is null.
+    ae_dataset_ids = [rec["id"] for rec in records]
+    method_dataset_ae = {
+        name: [rec["methodMeanAE"].get(name) for rec in records]
+        for name in rank_lists
+    }
+
     n = len(datasets)
     improved = [d for d in datasets if d["meanDeltaAE"] is not None and d["meanDeltaAE"] < 0]
     win_rates = [d["meanWinRate"] for d in datasets if d["meanWinRate"] is not None]
@@ -630,6 +641,7 @@ def build_general(records, datasets_meta):
         "datasets": datasets,
         "predictors": predictors,
         "methodRanking": method_ranking,
+        "methodDatasetAE": {"datasets": ae_dataset_ids, "byMethod": method_dataset_ae},
         "summary": {
             "datasetsImproved": len(improved),
             "meanWinRate": clean(np.mean(win_rates), 4) if win_rates else None,

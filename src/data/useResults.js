@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // Results artifacts are namespaced per experiment run:
 //   data/results/experiments.json           — the run index (switcher order)
@@ -12,6 +12,23 @@ function fetchJson(path) {
     if (!r.ok) throw new Error(`HTTP ${r.status}`)
     return r.json()
   })
+}
+
+// Module-level (not per-hook) so the single-run view and the cross-run compare
+// share one fetch per experiment+dataset instead of re-downloading the same
+// ~250 KB artifact when the compare toggle flips.
+const datasetCache = new Map()
+const generalCache = new Map()
+
+function cachedJson(cache, key) {
+  const hit = cache.get(key)
+  if (hit) return hit
+  const promise = fetchJson(`${key}.json`).catch((err) => {
+    cache.delete(key) // don't cache failures — a retry should refetch
+    throw err
+  })
+  cache.set(key, promise)
+  return promise
 }
 
 // Load the experiment index. `experiments[0]` is the default run.
@@ -67,7 +84,7 @@ export function useGeneral(experimentId, enabled) {
     if (!enabled || !experimentId) return
     let alive = true
     setState({ status: 'loading', general: null, error: null })
-    fetchJson(`${experimentId}/general.json`)
+    cachedJson(generalCache, `${experimentId}/general`)
       .then((data) => {
         if (alive) setState({ status: 'ready', general: data, error: null })
       })
@@ -85,24 +102,15 @@ export function useGeneral(experimentId, enabled) {
 // Lazy-load one dataset's full results JSON on demand, cached per
 // experiment+dataset across selections.
 export function useResultDataset(experimentId, id) {
-  const cache = useRef(new Map())
   const [state, setState] = useState({ status: 'idle', dataset: null, error: null })
 
   useEffect(() => {
     if (!id || !experimentId) return
-    const key = `${experimentId}/${id}`
-    const cached = cache.current.get(key)
-    if (cached) {
-      setState({ status: 'ready', dataset: cached, error: null })
-      return
-    }
     let alive = true
     setState({ status: 'loading', dataset: null, error: null })
-    fetchJson(`${key}.json`)
+    cachedJson(datasetCache, `${experimentId}/${id}`)
       .then((data) => {
-        if (!alive) return
-        cache.current.set(key, data)
-        setState({ status: 'ready', dataset: data, error: null })
+        if (alive) setState({ status: 'ready', dataset: data, error: null })
       })
       .catch((err) => {
         if (alive) setState({ status: 'error', dataset: null, error: err.message })
@@ -113,4 +121,56 @@ export function useResultDataset(experimentId, id) {
   }, [experimentId, id])
 
   return state
+}
+
+// Fetch several artifacts in parallel and settle into `{ byRun, missingRuns }`.
+// A run that 404s (it simply has no results for this dataset) is reported as
+// missing rather than failing the whole card — runs don't share a dataset list.
+function useAcrossRuns(cache, experimentIds, suffix, enabled) {
+  const [state, setState] = useState({ status: 'idle', byRun: {}, missingRuns: [] })
+  // Effects can't depend on an array identity that changes every render.
+  const key = experimentIds.join('|')
+
+  useEffect(() => {
+    if (!enabled || !key || suffix == null) return
+    const ids = key.split('|')
+    let alive = true
+    setState({ status: 'loading', byRun: {}, missingRuns: [] })
+    Promise.all(
+      ids.map((id) =>
+        cachedJson(cache, `${id}/${suffix}`).then(
+          (data) => ({ id, data }),
+          () => ({ id, data: null }),
+        ),
+      ),
+    ).then((results) => {
+      if (!alive) return
+      const byRun = {}
+      const missingRuns = []
+      for (const { id, data } of results) {
+        if (data) byRun[id] = data
+        else missingRuns.push(id)
+      }
+      setState({
+        status: Object.keys(byRun).length ? 'ready' : 'error',
+        byRun,
+        missingRuns,
+      })
+    })
+    return () => {
+      alive = false
+    }
+  }, [cache, key, suffix, enabled])
+
+  return state
+}
+
+// One dataset's full results from every run, for the cross-run compare chart.
+export function useDatasetAcrossRuns(experimentIds, id, enabled) {
+  return useAcrossRuns(datasetCache, experimentIds, id ?? null, enabled)
+}
+
+// Every run's cross-dataset aggregate, for the General compare card.
+export function useGeneralAcrossRuns(experimentIds, enabled) {
+  return useAcrossRuns(generalCache, experimentIds, 'general', enabled)
 }
