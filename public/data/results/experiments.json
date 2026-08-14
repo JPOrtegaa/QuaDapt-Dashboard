@@ -6,6 +6,12 @@
     "nDatasets": 57
   },
   {
+    "id": "topsoe_binrange",
+    "name": "Topsoe bin-range",
+    "desc": "Corrected One-vs-Rest run, Topsoe distance over the bin-range search",
+    "nDatasets": 62
+  },
+  {
     "id": "ovr_v2",
     "name": "OvR v2",
     "desc": "Previous One-vs-Rest run",

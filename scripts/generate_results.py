@@ -56,6 +56,13 @@ EXPERIMENTS = [
         "desc": "Corrected One-vs-Rest run",
     },
     {
+        "id": "topsoe_binrange",
+        "name": "Topsoe bin-range",
+        "dir": "ovr_results_corrected_topsoe_binrange",
+        "layout": "flat",
+        "desc": "Corrected One-vs-Rest run, Topsoe distance over the bin-range search",
+    },
+    {
         "id": "ovr_v2",
         "name": "OvR v2",
         "dir": "ovr_results2",
@@ -219,8 +226,20 @@ REAL_COL_RE = re.compile(r"^c(.+)_real$")
 CALIBRATION_TARGET_POINTS = 600  # per method, spread across all classes
 
 
+# Some runs name the same dataset's folder differently (the OpenML amazon
+# exports carry the generator's suffixes: …_seed_0_nrows_2000_…). Collapse
+# those to one id so every run keys into DATASET_SOURCE / NAME_OVERRIDES /
+# ID_CROSSWALK the same way and stays comparable across runs.
+ID_ALIAS_PATTERNS = [
+    (re.compile(r"^dataset_(\d+)_amazon.*$"), r"dataset_\1_amazon"),
+]
+
+
 def slugify(name: str) -> str:
     s = re.sub(r"[^a-zA-Z0-9]+", "_", name).strip("_").lower()
+    for pat, repl in ID_ALIAS_PATTERNS:
+        if pat.match(s):
+            return pat.sub(repl, s)
     return s
 
 
@@ -434,6 +453,10 @@ ID_CROSSWALK = {
     "dataset_4552_bachchoralharmony": "bach_choral",
     "student_performance_data": "student_performance",
     "phishingurl": "phishing_url",
+    "dataset_1457_amazon": "amazon_commerce",
+    "dataset_1491_one_hundred_plants_margin": "plants_margin",
+    "dataset_1492_one_hundred_plants_shape": "plants_shape",
+    "dataset_1493_one_hundred_plants_texture": "plants_texture",
     "dataset_44478_amazon": "amazon_seed_0",
     "dataset_44479_amazon": "amazon_seed_1",
     "dataset_44480_amazon": "amazon_seed_2",
