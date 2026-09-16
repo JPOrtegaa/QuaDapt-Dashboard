@@ -22,9 +22,10 @@ function LbTooltip({ active, payload }) {
   )
 }
 
-// All datasets ranked by mean Δ AE (averaged over the 9 _syn families). Green
-// bars = QuaDapt improves (negative Δ), amber = regresses. Click to drill in.
+// All datasets ranked by mean Δ AE (averaged over the run's _syn families).
+// Green bars = QuaDapt improves (negative Δ), amber = regresses. Click to drill in.
 export default function LeaderboardCard({ general, onPickDataset }) {
+  const nFamilies = general.families.length
   const data = general.datasets
     .filter((d) => d.meanDeltaAE != null)
     .map((d) => ({ ...d, delta: d.meanDeltaAE }))
@@ -37,7 +38,7 @@ export default function LeaderboardCard({ general, onPickDataset }) {
       wide
       icon={<BarsIcon />}
       title="Where does QuaDapt help? — datasets ranked by mean Δ AE"
-      subtitle="each bar = one dataset, averaged over its 9 _syn families · green = _syn wins, amber = regresses · click to open →"
+      subtitle={`each bar = one dataset, averaged over its ${nFamilies} _syn families · green = _syn wins, amber = regresses · click to open →`}
       style={{ padding: '22px 24px' }}
     >
       <div style={{ width: '100%', height }}>

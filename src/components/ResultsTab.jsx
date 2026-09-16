@@ -67,6 +67,10 @@ export default function ResultsTab() {
 
   const selectorDatasets = [GENERAL_ENTRY, ...manifest]
   const manifestEntry = manifest.find((d) => d.id === activeId)
+  const hasTopline = manifest.some((d) => d.nTopline > 0)
+  const methodsMeta = manifestEntry
+    ? `${manifestEntry.nMethods} methods${manifestEntry.nTopline ? ` (+${manifestEntry.nTopline} topline)` : ''}`
+    : '— methods'
 
   return (
     <>
@@ -84,7 +88,7 @@ export default function ResultsTab() {
           <span className="meta">
             {isGeneral
               ? `${general?.nDatasets ?? manifest.length} datasets · cross-dataset overview`
-              : `${manifestEntry?.nMethods ?? '—'} methods · ${fmtSamples(manifestEntry?.nBatches)} samples · AE on normalized preds`}
+              : `${methodsMeta} · ${fmtSamples(manifestEntry?.nBatches)} samples · AE on normalized preds`}
           </span>
         </div>
       </div>
@@ -99,7 +103,10 @@ export default function ResultsTab() {
         ) : (
           <>
             Absolute error per test sample, computed from the <span className="mono">*_p_normalized</span> columns
-            against true prevalence. <span className="mint">Mint = our adapted methods (_syn)</span>, grey = classic baselines.
+            against true prevalence. <span className="mint">Mint = our adapted methods (_syn)</span>, grey = classic baselines
+            {hasTopline && (
+              <>, <span className="sage">sage = _topline</span> (per class, the better of base / _syn — an oracle upper bound)</>
+            )}.
           </>
         )}
       </div>

@@ -35,6 +35,7 @@ function CompareTooltip({ active, payload, runs }) {
 // like-for-like read; rows are ordered by the reference run's mean AE.
 export default function MethodRunCompareChart({ rows, runs, onSelect }) {
   const synSet = new Set(rows.filter((r) => r.isSyn).map((r) => r.name))
+  const toplineSet = new Set(rows.filter((r) => r.isTopline).map((r) => r.name))
   const maxAE = Math.max(
     ...rows.flatMap((r) => runs.map((run) => r[`${run.id}__q3`] ?? r[run.id])),
   )
@@ -72,7 +73,7 @@ export default function MethodRunCompareChart({ rows, runs, onSelect }) {
               tickLine={false}
               axisLine={false}
               interval={0}
-              tick={<MethodTick synSet={synSet} />}
+              tick={<MethodTick synSet={synSet} toplineSet={toplineSet} />}
             />
             <Tooltip content={<CompareTooltip runs={runs} />} cursor={{ fill: 'rgba(255,255,255,.04)' }} />
             {runs.map((run, i) => (

@@ -1,8 +1,12 @@
+import { SAGE } from '../../lib/resultsDerive'
+
 // Y-axis tick for every method-ranking chart. In compare mode the bar color
 // encodes the run, so this label is the ONLY thing marking our adapted (_syn)
-// methods apart from the classic baselines — keep it identical everywhere.
-export default function MethodTick({ x, y, payload, synSet, fontSize = 10.5 }) {
+// methods and the _topline oracles apart from the classic baselines — keep it
+// identical everywhere.
+export default function MethodTick({ x, y, payload, synSet, toplineSet = new Set(), fontSize = 10.5 }) {
   const isSyn = synSet.has(payload.value)
+  const isTopline = toplineSet.has(payload.value)
   return (
     <text
       x={x}
@@ -11,8 +15,8 @@ export default function MethodTick({ x, y, payload, synSet, fontSize = 10.5 }) {
       textAnchor="end"
       fontFamily="'JetBrains Mono',monospace"
       fontSize={fontSize}
-      fontWeight={isSyn ? 700 : 500}
-      fill={isSyn ? '#eef1ec' : '#93998f'}
+      fontWeight={isSyn || isTopline ? 700 : 500}
+      fill={isTopline ? SAGE : isSyn ? '#eef1ec' : '#93998f'}
     >
       {payload.value}
     </text>

@@ -4,7 +4,7 @@ import {
 import Card from '../../Card'
 import { BarsIcon } from '../../Icons'
 import MethodTick from '../MethodTick'
-import { MINT, GREY } from '../../../lib/resultsDerive'
+import { methodColor } from '../../../lib/resultsDerive'
 
 const ROW_H = 19
 
@@ -29,15 +29,17 @@ export default function GlobalMethodRankCard({ general }) {
     .sort((a, b) => a.meanRank - b.meanRank)
   const excluded = general.methodRanking.length - data.length
   const synSet = new Set(data.filter((m) => m.isSyn).map((m) => m.name))
+  const toplineSet = new Set(data.filter((m) => m.isTopline).map((m) => m.name))
   const maxRank = Math.max(...data.map((m) => m.meanRank))
   const height = data.length * ROW_H + 24
+  const legend = `mint = our adapted (_syn)${toplineSet.size ? ', sage = _topline oracle' : ''}, grey = classic`
 
   return (
     <Card
       wide
       icon={<BarsIcon />}
       title="Global method ranking — mean rank across all datasets"
-      subtitle={`lower = better · mint = our adapted (_syn), grey = classic${excluded ? ` · ${excluded} partial-coverage methods hidden` : ''}`}
+      subtitle={`lower = better · ${legend}${excluded ? ` · ${excluded} partial-coverage methods hidden` : ''}`}
       style={{ padding: '22px 24px' }}
     >
       <div style={{ width: '100%', height }}>
@@ -58,12 +60,12 @@ export default function GlobalMethodRankCard({ general }) {
               tickLine={false}
               axisLine={false}
               interval={0}
-              tick={<MethodTick synSet={synSet} fontSize={10} />}
+              tick={<MethodTick synSet={synSet} toplineSet={toplineSet} fontSize={10} />}
             />
             <Tooltip content={<RankTooltip total={general.nDatasets} />} cursor={{ fill: 'rgba(255,255,255,.04)' }} />
             <Bar dataKey="meanRank" radius={[0, 3, 3, 0]} maxBarSize={11} isAnimationActive animationDuration={700}>
               {data.map((m) => (
-                <Cell key={m.name} fill={m.isSyn ? MINT : GREY} />
+                <Cell key={m.name} fill={methodColor(m)} />
               ))}
               <LabelList
                 dataKey="meanRank"

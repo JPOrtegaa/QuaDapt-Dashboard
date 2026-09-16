@@ -6,11 +6,28 @@
 export const MINT = '#74e0a3' // our adapted (_syn) methods
 export const GREY = '#7f8a80' // classic baselines
 export const AMBER = '#e0a750' // regression / base-better
+export const SAGE = '#c3e29a' // <base>_topline: per class, the better of base / syn (oracle)
+
+// Three-way method category color: topline > syn > classic.
+export function methodColor(m) {
+  return m.isTopline ? SAGE : m.isSyn ? MINT : GREY
+}
+
+// Name-based fallbacks for artifacts that carry no flags (general.json's
+// methodDatasetAE matrix). Mirror SYN_ALIASES / the `_topline` suffix in
+// scripts/generate_results.py.
+const SYN_ALIASES = new Set(['DySyn'])
+export function isSynName(name) {
+  return name.endsWith('_syn') || SYN_ALIASES.has(name)
+}
+export function isToplineName(name) {
+  return name.endsWith('_topline')
+}
 
 // In cross-run compare mode the bar color encodes the *run*, not syn-vs-base
 // (the bold Y-axis label carries that instead). Same palette as everywhere
 // else — mint, sage, amber, then the muted greens.
-const RUN_RAMP = [MINT, '#c3e29a', AMBER, '#6fbf9c', '#93998f']
+const RUN_RAMP = [MINT, SAGE, AMBER, '#6fbf9c', '#93998f']
 export function runColor(i) {
   return RUN_RAMP[i % RUN_RAMP.length]
 }
@@ -64,15 +81,17 @@ export function classColor(i) {
 }
 
 // ---- cross-run comparison ------------------------------------------------
-// Shape every source of per-method AE into one `{ name: {meanAE, q1, q3, isSyn} }`
-// map so a single grouped-bar chart can render both the per-dataset card and
-// the General aggregate.
+// Shape every source of per-method AE into one
+// `{ name: {meanAE, q1, q3, isSyn, isTopline} }` map so a single grouped-bar
+// chart can render both the per-dataset card and the General aggregate.
 
 // Per-dataset: the JSON already carries mean/Q1/Q3 across that dataset's batches.
 export function methodStatsFromDataset(dataset) {
   const stats = {}
   for (const m of dataset.methods) {
-    stats[m.name] = { meanAE: m.meanAE, q1: m.q1, q3: m.q3, isSyn: m.isSyn }
+    stats[m.name] = {
+      meanAE: m.meanAE, q1: m.q1, q3: m.q3, isSyn: m.isSyn, isTopline: Boolean(m.isTopline),
+    }
   }
   return stats
 }
@@ -117,7 +136,8 @@ export function aggregateMethodAE(general, datasetIds) {
       meanAE: values.reduce((a, b) => a + b, 0) / values.length,
       q1: quantile(values, 0.25),
       q3: quantile(values, 0.75),
-      isSyn: name.endsWith('_syn'),
+      isSyn: isSynName(name),
+      isTopline: isToplineName(name),
       n: values.length,
     }
   }
@@ -140,7 +160,7 @@ export function buildRunCompareRows(statsByRun, runIds, referenceId, minCoverage
     .sort((a, b) => reference[a].meanAE - reference[b].meanAE)
 
   const rows = names.map((name) => {
-    const row = { name, isSyn: reference[name].isSyn }
+    const row = { name, isSyn: reference[name].isSyn, isTopline: reference[name].isTopline }
     for (const id of present) {
       const s = statsByRun[id][name]
       row[id] = s.meanAE

@@ -2,7 +2,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ErrorBar, LabelList, ResponsiveContainer,
 } from 'recharts'
 import MethodTick from './MethodTick'
-import { MINT, GREY } from '../../lib/resultsDerive'
+import { methodColor } from '../../lib/resultsDerive'
 import { fmtAE } from '../../lib/resultsFormat'
 
 const ROW_H = 21
@@ -20,16 +20,19 @@ function RankTooltip({ active, payload }) {
 }
 
 // Horizontal bar ranking, sorted best -> worst (methods already arrive
-// pre-sorted from generate_results.py). Mint bars = _syn variants, grey =
-// classic baselines; whiskers show the per-method AE interquartile range.
+// pre-sorted from generate_results.py). Mint bars = _syn variants, sage =
+// _topline oracles, grey = classic baselines; whiskers show the per-method AE
+// interquartile range.
 export default function MethodRankingChart({ methods, selected, onSelect }) {
   const synSet = new Set(methods.filter((m) => m.isSyn).map((m) => m.name))
+  const toplineSet = new Set(methods.filter((m) => m.isTopline).map((m) => m.name))
   const data = methods.map((m) => ({
     name: m.name,
     meanAE: m.meanAE,
     q1: m.q1,
     q3: m.q3,
     isSyn: m.isSyn,
+    isTopline: Boolean(m.isTopline),
     err: [+(m.meanAE - m.q1).toFixed(3), +(m.q3 - m.meanAE).toFixed(3)],
   }))
   const maxAE = Math.max(...data.map((d) => d.q3 ?? d.meanAE))
@@ -55,7 +58,7 @@ export default function MethodRankingChart({ methods, selected, onSelect }) {
             tickLine={false}
             axisLine={false}
             interval={0}
-            tick={<MethodTick synSet={synSet} />}
+            tick={<MethodTick synSet={synSet} toplineSet={toplineSet} />}
           />
           <Tooltip content={<RankTooltip />} cursor={{ fill: 'rgba(255,255,255,.04)' }} />
           <Bar
@@ -71,7 +74,7 @@ export default function MethodRankingChart({ methods, selected, onSelect }) {
             {data.map((d) => (
               <Cell
                 key={d.name}
-                fill={d.isSyn ? MINT : GREY}
+                fill={methodColor(d)}
                 fillOpacity={!selected || selected === d.name ? 1 : 0.4}
               />
             ))}

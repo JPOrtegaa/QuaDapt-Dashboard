@@ -113,6 +113,7 @@ h1{font-size:24px;font-weight:800;letter-spacing:-.01em;margin:0}
 .results-desc{font-size:12px;color:var(--t3);line-height:1.5;margin:-8px 0 22px}
 .results-desc b{color:var(--t2);font-weight:600}
 .results-desc .mint{color:var(--mint);font-weight:600}
+.results-desc .sage{color:var(--sage);font-weight:600}
 
 .chart-sub{font-size:11px;color:var(--t4);margin-top:-8px}
 

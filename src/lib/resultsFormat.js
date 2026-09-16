@@ -17,3 +17,8 @@ export function fmtDelta(v, digits = 3) {
 export function fmtSamples(n) {
   return n == null ? '—' : n.toLocaleString('en-US')
 }
+
+// A topline's per-class detector choice: "1 → PACC · 2 → PACC_syn · …".
+export function fmtPick(pick) {
+  return Object.entries(pick).map(([cls, m]) => `${cls} → ${m}`).join(' · ')
+}

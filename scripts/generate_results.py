@@ -10,10 +10,14 @@ in every run, computes:
   * per-method ranking (mean AE, IQR)
   * per-method, per-class mean AE (for the "mean AE by class" heatmap)
   * base -> *_syn family pairs (delta mean AE, win-rate, paired per-batch AE)
+  * <base>_topline oracle methods (runs flagged "topline" only): per class,
+    the base/*_syn detector with the lower mean per-class AE — an upper bound
+    on a per-class detector choice, kept out of families/best-method stats
   * per-batch prevalence shift (total-variation distance from the dataset's
     global class prior)
   * calibration points (true vs. estimated prevalence) for a bounded set of
-    methods (the base/*_syn family members plus the single best method)
+    methods (the base/*_syn family members, their toplines, plus the single
+    best method)
 
 Output, per experiment: one JSON per dataset under
 results/generated/<experiment>/<id>.json, plus that experiment's manifest.json
@@ -47,6 +51,8 @@ OUT_DIR = os.path.join(ROOT, "results", "generated")
 #   layout "grouped" -> <dir>/<source>/<dataset>/<dataset>_results.csv
 #          "flat"    -> <dir>/<dataset>/<dataset>_results.csv, with the source
 #                       resolved per dataset id through DATASET_SOURCE
+#   topline synthesize <base>_topline methods (per class, the better of base
+#          and its syn variant); absent/False leaves the run as-is
 EXPERIMENTS = [
     {
         "id": "ovr_corrected",
@@ -54,6 +60,7 @@ EXPERIMENTS = [
         "dir": "ovr_results_corrected",
         "layout": "flat",
         "desc": "Corrected One-vs-Rest run",
+        "topline": True,
     },
     {
         "id": "topsoe_binrange",
@@ -61,6 +68,7 @@ EXPERIMENTS = [
         "dir": "ovr_results_corrected_topsoe_binrange",
         "layout": "flat",
         "desc": "Corrected One-vs-Rest run, Topsoe distance over the bin-range search",
+        "topline": True,
     },
     {
         "id": "ovr_v2",
@@ -223,7 +231,54 @@ for _seed in range(5):
 
 REAL_COL_RE = re.compile(r"^c(.+)_real$")
 
+# Syn variants that don't carry the `_syn` suffix: name -> its classic base.
+SYN_ALIASES = {"DySyn": "DyS"}
+
 CALIBRATION_TARGET_POINTS = 600  # per method, spread across all classes
+
+
+def syn_base(name: str) -> str | None:
+    """Base method name if `name` is a syn variant (by suffix or alias), else None."""
+    if name in SYN_ALIASES:
+        return SYN_ALIASES[name]
+    if name.endswith("_syn"):
+        return name[: -len("_syn")]
+    return None
+
+
+def synthesize_topline(df: pd.DataFrame, families_map: dict, classes: list):
+    """Append one `<base>_topline` method per family to `df`.
+
+    For every class, the detector (base or syn) with the lower mean per-class
+    AE over all batches is chosen once for the whole dataset, and its
+    `c<k>_p_normalized` column is used as-is for every batch — no
+    renormalization, so the topline's per-class mean AE is exactly
+    min(base, syn). Returns (df, picks) with picks[topline][class] = winner.
+    """
+    picks, frames = {}, []
+    for base, syn in families_map.items():
+        b = df[df["qnt"] == base].sort_values("batch_index").reset_index(drop=True)
+        s = df[df["qnt"] == syn].sort_values("batch_index").reset_index(drop=True)
+        n = min(len(b), len(s))
+        b, s = b.iloc[:n], s.iloc[:n]
+        assert (b["batch_index"].to_numpy() == s["batch_index"].to_numpy()).all(), (base, syn)
+        top = b.copy()
+        name = f"{base}_topline"
+        top["qnt"] = name
+        pick = {}
+        for cls in classes:
+            pcol, rcol = f"c{cls}_p_normalized", f"c{cls}_real"
+            ae_b = (b[pcol] - b[rcol]).abs().mean()
+            ae_s = (s[pcol] - s[rcol]).abs().mean()
+            winner = syn if ae_s < ae_b else base  # tie -> base
+            if winner == syn:
+                top[pcol] = s[pcol].to_numpy()
+            pick[cls] = winner
+        picks[name] = pick
+        frames.append(top)
+    if frames:
+        df = pd.concat([df, *frames], ignore_index=True)
+    return df, picks
 
 
 # Some runs name the same dataset's folder differently (the OpenML amazon
@@ -272,7 +327,7 @@ def clean(x, ndigits=4):
     return round(xf, ndigits)
 
 
-def compute_dataset(group: str | None, csv_path: str) -> dict | None:
+def compute_dataset(group: str | None, csv_path: str, topline: bool = False) -> dict | None:
     fname = os.path.basename(csv_path)
     prefix = fname[: -len("_results.csv")]
     id_ = slugify(prefix)
@@ -287,7 +342,20 @@ def compute_dataset(group: str | None, csv_path: str) -> dict | None:
 
     p_cols = [f"c{c}_p_normalized" for c in classes]
     real_cols = [f"c{c}_real" for c in classes]
-    methods = sorted(df["qnt"].unique().tolist())
+    methods = sorted(df["qnt"].unique().tolist())  # real methods only
+
+    method_set = set(methods)
+    families_map = {}
+    for m in methods:
+        if (base := syn_base(m)) in method_set:
+            families_map[base] = m
+
+    # Synthesized toplines join `df` before any stats so means / quantiles /
+    # per-class AE / calibration cover them like any other method.
+    topline_picks = {}
+    if topline:
+        df, topline_picks = synthesize_topline(df, families_map, classes)
+    all_methods = sorted(df["qnt"].unique().tolist())
 
     # per-row AE = mean absolute error across classes, from normalized preds
     err = (df[p_cols].to_numpy() - df[real_cols].to_numpy())
@@ -302,12 +370,6 @@ def compute_dataset(group: str | None, csv_path: str) -> dict | None:
     per_class_err = {}
     for cls, pcol, rcol in zip(classes, p_cols, real_cols):
         per_class_err[cls] = (df[pcol] - df[rcol]).abs().groupby(df["qnt"]).mean()
-
-    method_set = set(methods)
-    families_map = {}
-    for m in methods:
-        if m.endswith("_syn") and m[: -len("_syn")] in method_set:
-            families_map[m[: -len("_syn")]] = m
 
     # real prevalence per batch (constant across methods) -> global prior
     base_rows = df[df["qnt"] == methods[0]].sort_values("batch_index")
@@ -337,25 +399,38 @@ def compute_dataset(group: str | None, csv_path: str) -> dict | None:
 
     methods_out = []
     best_method, best_mean = None, None
-    for m in sorted(methods, key=lambda m: means[m]):
-        is_syn = m.endswith("_syn") and m[: -len("_syn")] in method_set
+    for m in sorted(all_methods, key=lambda m: means[m]):
+        is_topline = m in topline_picks
+        base = syn_base(m)
+        is_syn = base in method_set
         mean_v = clean(means[m])
-        if best_mean is None or mean_v < best_mean:
+        # toplines are an oracle bound, never the dataset's "best method"
+        if not is_topline and (best_mean is None or mean_v < best_mean):
             best_mean, best_method = mean_v, m
-        methods_out.append({
+        if is_topline:
+            family = m[: -len("_topline")]
+        else:
+            family = base if is_syn else None
+        entry = {
             "name": m,
-            "family": m[: -len("_syn")] if is_syn else None,
+            "family": family,
             "isSyn": is_syn,
             "meanAE": mean_v,
             "q1": clean(q1s[m]),
             "q3": clean(q3s[m]),
             "perClassAE": {cls: clean(per_class_err[cls].get(m)) for cls in classes},
-        })
+        }
+        if is_topline:  # keys only on topline entries: real-method shape unchanged
+            entry["isTopline"] = True
+            entry["pick"] = topline_picks[m]
+        methods_out.append(entry)
 
-    # calibration: family members + the single best method, batches sampled
-    # evenly so total points/method stay roughly bounded regardless of
-    # how many classes the dataset has.
-    calib_methods = set(families_map.keys()) | set(families_map.values()) | {best_method}
+    # calibration: family members (+ their toplines) + the single best method,
+    # batches sampled evenly so total points/method stay roughly bounded
+    # regardless of how many classes the dataset has.
+    calib_methods = (
+        set(families_map.keys()) | set(families_map.values()) | set(topline_picks) | {best_method}
+    )
     n_classes = len(classes)
     calib_batches = max(10, min(n_batches, CALIBRATION_TARGET_POINTS // max(1, n_classes)))
     sample_idx = np.linspace(0, n_batches - 1, calib_batches).round().astype(int)
@@ -383,6 +458,8 @@ def compute_dataset(group: str | None, csv_path: str) -> dict | None:
         "tv": [clean(v, 3) for v in tv],
         "calibration": calibration,
     }
+    if topline:
+        dataset["nTopline"] = len(topline_picks)
 
     syn_win_rates = [f["winRate"] for f in families if f["winRate"] is not None]
     families_improved = sum(1 for f in families if f["deltaMeanAE"] < 0)
@@ -407,6 +484,8 @@ def compute_dataset(group: str | None, csv_path: str) -> dict | None:
             if biggest else None
         ),
     }
+    if topline:
+        manifest_entry["nTopline"] = len(topline_picks)
 
     # --- cross-dataset ("General") record ---------------------------------
     # Free-tier metadata derived straight from the results: the global class
@@ -433,6 +512,7 @@ def compute_dataset(group: str | None, csv_path: str) -> dict | None:
         # methods_out is sorted best -> worst, so position is the rank (1-based)
         "methodRanks": {m["name"]: i + 1 for i, m in enumerate(methods_out)},
         "methodMeanAE": {m["name"]: m["meanAE"] for m in methods_out},
+        "toplineMethods": list(topline_picks),
         "prior": {
             "entropyNorm": clean(prior_entropy_norm, 3),
             "gini": clean(prior_gini, 3),
@@ -602,20 +682,25 @@ def build_general(records, datasets_meta):
     predictors.sort(key=lambda p: (p["corr"] is None, -abs(p["corr"] or 0)))
 
     # Global method ranking: mean rank of each method across all datasets it
-    # appears in (lower = better). _syn variants flagged for coloring.
+    # appears in (lower = better). Syn variants and toplines flagged for
+    # coloring (`isTopline` only present on topline entries).
     rank_lists = {}
+    topline_names = set()
     for rec in records:
         for name, rank in rec["methodRanks"].items():
             rank_lists.setdefault(name, []).append(rank)
-    method_ranking = [
-        {
+        topline_names.update(rec.get("toplineMethods", []))
+    method_ranking = []
+    for name, ranks in rank_lists.items():
+        entry = {
             "name": name,
-            "isSyn": name.endswith("_syn"),
+            "isSyn": syn_base(name) is not None,
             "meanRank": clean(float(np.mean(ranks)), 2),
             "coverage": len(ranks),
         }
-        for name, ranks in rank_lists.items()
-    ]
+        if name in topline_names:
+            entry["isTopline"] = True
+        method_ranking.append(entry)
     method_ranking.sort(key=lambda m: m["meanRank"])
 
     # Per-method x per-dataset mean AE. Runs don't share a dataset list, so the
@@ -671,7 +756,7 @@ def build_experiment(exp: dict, datasets_meta: dict) -> dict | None:
     for group, csv_path in sorted(find_result_csvs(raw_dir, exp["layout"])):
         rel = os.path.relpath(csv_path, raw_dir)
         print(f"  {rel} ...", flush=True)
-        result = compute_dataset(group, csv_path)
+        result = compute_dataset(group, csv_path, topline=exp.get("topline", False))
         if result is None:
             continue
         dataset, manifest_entry, general_record = result

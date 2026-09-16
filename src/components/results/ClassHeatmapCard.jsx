@@ -5,6 +5,8 @@ import CalibrationChart from './CalibrationChart'
 
 export default function ClassHeatmapCard({ dataset, selectedMethod, onSelectMethod }) {
   const { methods, classes, calibration } = dataset
+  const hasTopline = methods.some((m) => m.isTopline)
+  const selectedPick = methods.find((m) => m.name === selectedMethod)?.pick
 
   let min = Infinity, max = -Infinity
   for (const m of methods) {
@@ -52,7 +54,13 @@ export default function ClassHeatmapCard({ dataset, selectedMethod, onSelectMeth
             </tbody>
           </table>
         </div>
-        <CalibrationChart method={selectedMethod} calibration={calibration[selectedMethod]} classes={classes} />
+        <CalibrationChart
+          method={selectedMethod}
+          calibration={calibration[selectedMethod]}
+          classes={classes}
+          pick={selectedPick}
+          hasTopline={hasTopline}
+        />
       </div>
     </Card>
   )

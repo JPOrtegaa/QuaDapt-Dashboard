@@ -8,14 +8,15 @@
     "nBatches": 1000,
     "bestMethod": "X_syn",
     "bestMeanAE": 0.157,
-    "synWinRate": 0.4552,
+    "synWinRate": 0.4334,
     "familiesImproved": 4,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "X",
       "syn": "X_syn",
       "deltaMeanAE": -0.0509
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "customer_segmentation",
@@ -26,14 +27,15 @@
     "nBatches": 1000,
     "bestMethod": "DyS",
     "bestMeanAE": 0.1196,
-    "synWinRate": 0.3382,
+    "synWinRate": 0.3083,
     "familiesImproved": 1,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "PACC",
       "syn": "PACC_syn",
       "deltaMeanAE": -0.0052
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "fashion_mnist",
@@ -44,14 +46,15 @@
     "nBatches": 1000,
     "bestMethod": "MS",
     "bestMeanAE": 0.0221,
-    "synWinRate": 0.203,
+    "synWinRate": 0.2048,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "ACC",
       "syn": "ACC_syn",
       "deltaMeanAE": 0.0021
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "healthcare",
@@ -62,14 +65,15 @@
     "nBatches": 1000,
     "bestMethod": "MAX_syn",
     "bestMeanAE": 0.0679,
-    "synWinRate": 0.5354,
+    "synWinRate": 0.499,
     "familiesImproved": 5,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "X",
       "syn": "X_syn",
       "deltaMeanAE": -0.0252
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "iris",
@@ -80,14 +84,15 @@
     "nBatches": 1000,
     "bestMethod": "DyS",
     "bestMeanAE": 0.0749,
-    "synWinRate": 0.33,
+    "synWinRate": 0.3111,
     "familiesImproved": 3,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "PACC",
       "syn": "PACC_syn",
       "deltaMeanAE": -0.0135
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "music_genre",
@@ -98,14 +103,15 @@
     "nBatches": 1000,
     "bestMethod": "PACC_syn",
     "bestMeanAE": 0.0549,
-    "synWinRate": 0.4481,
+    "synWinRate": 0.4058,
     "familiesImproved": 6,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "ACC",
       "syn": "ACC_syn",
       "deltaMeanAE": -0.0115
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "predictive_maintenance",
@@ -116,14 +122,15 @@
     "nBatches": 1000,
     "bestMethod": "DyS",
     "bestMeanAE": 0.0885,
-    "synWinRate": 0.0586,
+    "synWinRate": 0.0527,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "MAX",
       "syn": "MAX_syn",
       "deltaMeanAE": 0.0204
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "star_classification",
@@ -134,14 +141,15 @@
     "nBatches": 1000,
     "bestMethod": "X",
     "bestMeanAE": 0.04,
-    "synWinRate": 0.1939,
+    "synWinRate": 0.1953,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "HDy",
       "syn": "HDy_syn",
       "deltaMeanAE": 0.0228
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "student_performance_data",
@@ -152,14 +160,15 @@
     "nBatches": 1000,
     "bestMethod": "DyS",
     "bestMeanAE": 0.1089,
-    "synWinRate": 0.3658,
+    "synWinRate": 0.3292,
     "familiesImproved": 1,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "PACC",
       "syn": "PACC_syn",
       "deltaMeanAE": -0.0163
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "zoo",
@@ -170,14 +179,15 @@
     "nBatches": 1000,
     "bestMethod": "SMM",
     "bestMeanAE": 0.0278,
-    "synWinRate": 0.1797,
+    "synWinRate": 0.1904,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "HDy",
       "syn": "HDy_syn",
       "deltaMeanAE": 0.0025
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "dataset_44478_amazon",
@@ -188,14 +198,15 @@
     "nBatches": 1000,
     "bestMethod": "PACC_syn",
     "bestMeanAE": 0.019,
-    "synWinRate": 0.8219,
+    "synWinRate": 0.7409,
     "familiesImproved": 8,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "X",
       "syn": "X_syn",
       "deltaMeanAE": -0.0078
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "dataset_44479_amazon",
@@ -206,14 +217,15 @@
     "nBatches": 1000,
     "bestMethod": "PACC_syn",
     "bestMeanAE": 0.0196,
-    "synWinRate": 0.6256,
+    "synWinRate": 0.5649,
     "familiesImproved": 5,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "PACC",
       "syn": "PACC_syn",
       "deltaMeanAE": -0.0109
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "dataset_44480_amazon",
@@ -224,14 +236,15 @@
     "nBatches": 1000,
     "bestMethod": "PACC_syn",
     "bestMeanAE": 0.0194,
-    "synWinRate": 0.6006,
+    "synWinRate": 0.5406,
     "familiesImproved": 4,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "X",
       "syn": "X_syn",
       "deltaMeanAE": -0.0075
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "dataset_44481_amazon",
@@ -242,14 +255,15 @@
     "nBatches": 1000,
     "bestMethod": "PACC_syn",
     "bestMeanAE": 0.0193,
-    "synWinRate": 0.6157,
+    "synWinRate": 0.5563,
     "familiesImproved": 5,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "PACC",
       "syn": "PACC_syn",
       "deltaMeanAE": -0.006
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "dataset_44482_amazon",
@@ -260,14 +274,15 @@
     "nBatches": 1000,
     "bestMethod": "PACC_syn",
     "bestMeanAE": 0.0194,
-    "synWinRate": 0.7501,
+    "synWinRate": 0.6772,
     "familiesImproved": 7,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "PACC",
       "syn": "PACC_syn",
       "deltaMeanAE": -0.01
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "dataset_1457_amazon",
@@ -278,14 +293,15 @@
     "nBatches": 1000,
     "bestMethod": "T50",
     "bestMeanAE": 0.0091,
-    "synWinRate": 0.1666,
+    "synWinRate": 0.1499,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "X",
       "syn": "X_syn",
       "deltaMeanAE": 0.0
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "dataset_4552_bachchoralharmony",
@@ -296,14 +312,15 @@
     "nBatches": 1000,
     "bestMethod": "MS2",
     "bestMeanAE": 0.0127,
-    "synWinRate": 0.1673,
+    "synWinRate": 0.1506,
     "familiesImproved": 1,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "ACC",
       "syn": "ACC_syn",
       "deltaMeanAE": -0.0036
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "fars",
@@ -314,14 +331,15 @@
     "nBatches": 1000,
     "bestMethod": "SMM",
     "bestMeanAE": 0.0717,
-    "synWinRate": 0.0879,
+    "synWinRate": 0.0792,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "ACC",
       "syn": "ACC_syn",
       "deltaMeanAE": 0.0144
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "fabert",
@@ -332,14 +350,15 @@
     "nBatches": 1000,
     "bestMethod": "PACC",
     "bestMeanAE": 0.0472,
-    "synWinRate": 0.1888,
+    "synWinRate": 0.1764,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "ACC",
       "syn": "ACC_syn",
       "deltaMeanAE": 0.0144
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "microaggregation2",
@@ -350,14 +369,15 @@
     "nBatches": 1000,
     "bestMethod": "PACC",
     "bestMeanAE": 0.098,
-    "synWinRate": 0.0957,
+    "synWinRate": 0.0865,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "MAX",
       "syn": "MAX_syn",
       "deltaMeanAE": 0.0181
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "dataset_1491_one_hundred_plants_margin",
@@ -368,14 +388,15 @@
     "nBatches": 1000,
     "bestMethod": "PACC_syn",
     "bestMeanAE": 0.0067,
-    "synWinRate": 0.4632,
+    "synWinRate": 0.4169,
     "familiesImproved": 3,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "ACC",
       "syn": "ACC_syn",
       "deltaMeanAE": -0.0081
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "dataset_1492_one_hundred_plants_shape",
@@ -386,14 +407,15 @@
     "nBatches": 1000,
     "bestMethod": "SMM_syn",
     "bestMeanAE": 0.01,
-    "synWinRate": 0.7109,
+    "synWinRate": 0.6526,
     "familiesImproved": 6,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "SMM",
       "syn": "SMM_syn",
       "deltaMeanAE": -0.0065
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "dataset_1493_one_hundred_plants_texture",
@@ -404,14 +426,15 @@
     "nBatches": 1000,
     "bestMethod": "MS2_syn",
     "bestMeanAE": 0.0042,
-    "synWinRate": 0.5584,
-    "familiesImproved": 6,
-    "nFamilies": 9,
+    "synWinRate": 0.5864,
+    "familiesImproved": 7,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "ACC",
       "syn": "ACC_syn",
       "deltaMeanAE": -0.0126
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "dataset_313_spectrometer",
@@ -422,14 +445,15 @@
     "nBatches": 1000,
     "bestMethod": "PACC_syn",
     "bestMeanAE": 0.0356,
-    "synWinRate": 0.6431,
+    "synWinRate": 0.5923,
     "familiesImproved": 7,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "ACC",
       "syn": "ACC_syn",
       "deltaMeanAE": -0.0243
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "avila",
@@ -440,14 +464,15 @@
     "nBatches": 1000,
     "bestMethod": "MAX",
     "bestMeanAE": 0.0647,
-    "synWinRate": 0.2959,
+    "synWinRate": 0.2687,
     "familiesImproved": 2,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "PACC",
       "syn": "PACC_syn",
       "deltaMeanAE": -0.0093
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "chessgame",
@@ -458,14 +483,15 @@
     "nBatches": 1000,
     "bestMethod": "MAX_syn",
     "bestMeanAE": 0.0486,
-    "synWinRate": 0.4946,
-    "familiesImproved": 6,
-    "nFamilies": 9,
+    "synWinRate": 0.5153,
+    "familiesImproved": 7,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "ACC",
       "syn": "ACC_syn",
       "deltaMeanAE": -0.0241
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "covertype",
@@ -476,14 +502,15 @@
     "nBatches": 1000,
     "bestMethod": "MS2",
     "bestMeanAE": 0.079,
-    "synWinRate": 0.1884,
+    "synWinRate": 0.1754,
     "familiesImproved": 1,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "X",
       "syn": "X_syn",
       "deltaMeanAE": -0.0063
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "dermatology",
@@ -494,14 +521,15 @@
     "nBatches": 1000,
     "bestMethod": "MS",
     "bestMeanAE": 0.0077,
-    "synWinRate": 0.0871,
+    "synWinRate": 0.0856,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "T50",
       "syn": "T50_syn",
       "deltaMeanAE": 0.0049
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "har",
@@ -512,14 +540,15 @@
     "nBatches": 1000,
     "bestMethod": "DyS",
     "bestMeanAE": 0.0087,
-    "synWinRate": 0.1126,
+    "synWinRate": 0.1134,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "T50",
       "syn": "T50_syn",
       "deltaMeanAE": 0.005
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "land_use",
@@ -530,14 +559,15 @@
     "nBatches": 1000,
     "bestMethod": "DyS",
     "bestMeanAE": 0.0335,
-    "synWinRate": 0.1742,
+    "synWinRate": 0.1634,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "PACC",
       "syn": "PACC_syn",
       "deltaMeanAE": 0.0049
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "mfeat",
@@ -548,14 +578,15 @@
     "nBatches": 1000,
     "bestMethod": "PACC_syn",
     "bestMeanAE": 0.041,
-    "synWinRate": 0.2493,
+    "synWinRate": 0.2262,
     "familiesImproved": 1,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "PACC",
       "syn": "PACC_syn",
       "deltaMeanAE": -0.016
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "mfeat_icdm21",
@@ -566,14 +597,15 @@
     "nBatches": 1000,
     "bestMethod": "ACC",
     "bestMeanAE": 0.0946,
-    "synWinRate": 0.3689,
+    "synWinRate": 0.3533,
     "familiesImproved": 3,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "MS2",
       "syn": "MS2_syn",
       "deltaMeanAE": -0.016
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "mosquitoes",
@@ -584,14 +616,15 @@
     "nBatches": 1000,
     "bestMethod": "MS2",
     "bestMeanAE": 0.0171,
-    "synWinRate": 0.1181,
+    "synWinRate": 0.1217,
     "familiesImproved": 1,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "HDy",
       "syn": "HDy_syn",
       "deltaMeanAE": -0.0064
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "nursery",
@@ -602,14 +635,15 @@
     "nBatches": 1000,
     "bestMethod": "DyS",
     "bestMeanAE": 0.0922,
-    "synWinRate": 0.1772,
+    "synWinRate": 0.1687,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "ACC",
       "syn": "ACC_syn",
       "deltaMeanAE": 0.0242
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "phishingurl",
@@ -620,14 +654,15 @@
     "nBatches": 1000,
     "bestMethod": "DyS",
     "bestMeanAE": 0.0196,
-    "synWinRate": 0.135,
+    "synWinRate": 0.1352,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "HDy",
       "syn": "HDy_syn",
       "deltaMeanAE": 0.0029
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "satimage",
@@ -638,14 +673,15 @@
     "nBatches": 1000,
     "bestMethod": "MS",
     "bestMeanAE": 0.0511,
-    "synWinRate": 0.2166,
+    "synWinRate": 0.2111,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "PACC",
       "syn": "PACC_syn",
       "deltaMeanAE": 0.0011
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "walking",
@@ -656,14 +692,15 @@
     "nBatches": 1000,
     "bestMethod": "PCC",
     "bestMeanAE": 0.0362,
-    "synWinRate": 0.4428,
+    "synWinRate": 0.4109,
     "familiesImproved": 3,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "PACC",
       "syn": "PACC_syn",
       "deltaMeanAE": -0.0096
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "academic_success",
@@ -674,14 +711,15 @@
     "nBatches": 1000,
     "bestMethod": "DyS",
     "bestMeanAE": 0.0617,
-    "synWinRate": 0.1882,
+    "synWinRate": 0.1783,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "PACC",
       "syn": "PACC_syn",
       "deltaMeanAE": 0.0644
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "digits",
@@ -692,14 +730,15 @@
     "nBatches": 1000,
     "bestMethod": "MS2",
     "bestMeanAE": 0.0064,
-    "synWinRate": 0.1413,
+    "synWinRate": 0.1362,
     "familiesImproved": 1,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "T50",
       "syn": "T50_syn",
       "deltaMeanAE": -0.0003
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "dry_bean",
@@ -710,14 +749,15 @@
     "nBatches": 1000,
     "bestMethod": "DyS",
     "bestMeanAE": 0.0122,
-    "synWinRate": 0.1437,
+    "synWinRate": 0.1328,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "MS2",
       "syn": "MS2_syn",
       "deltaMeanAE": 0.003
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "letter",
@@ -728,14 +768,15 @@
     "nBatches": 1000,
     "bestMethod": "PACC_syn",
     "bestMeanAE": 0.0204,
-    "synWinRate": 0.3367,
+    "synWinRate": 0.308,
     "familiesImproved": 3,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "ACC",
       "syn": "ACC_syn",
       "deltaMeanAE": -0.0257
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "wine_quality",
@@ -746,14 +787,15 @@
     "nBatches": 1000,
     "bestMethod": "MAX_syn",
     "bestMeanAE": 0.118,
-    "synWinRate": 0.403,
+    "synWinRate": 0.367,
     "familiesImproved": 4,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "MS",
       "syn": "MS_syn",
       "deltaMeanAE": -0.021
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "bike_sharing_data",
@@ -764,14 +806,15 @@
     "nBatches": 1000,
     "bestMethod": "T50",
     "bestMeanAE": 0.0757,
-    "synWinRate": 0.2073,
+    "synWinRate": 0.1967,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "PACC",
       "syn": "PACC_syn",
       "deltaMeanAE": 0.0169
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "blog_feedback_data",
@@ -782,14 +825,15 @@
     "nBatches": 1000,
     "bestMethod": "DyS",
     "bestMeanAE": 0.1316,
-    "synWinRate": 0.2537,
+    "synWinRate": 0.237,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "X",
       "syn": "X_syn",
       "deltaMeanAE": 0.0205
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "concrete_data",
@@ -800,14 +844,15 @@
     "nBatches": 1000,
     "bestMethod": "DyS",
     "bestMeanAE": 0.0906,
-    "synWinRate": 0.5164,
+    "synWinRate": 0.4927,
     "familiesImproved": 4,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "ACC",
       "syn": "ACC_syn",
       "deltaMeanAE": -0.0562
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "contraceptive_data",
@@ -818,14 +863,15 @@
     "nBatches": 1000,
     "bestMethod": "MAX",
     "bestMeanAE": 0.1074,
-    "synWinRate": 0.2166,
+    "synWinRate": 0.1995,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "ACC",
       "syn": "ACC_syn",
       "deltaMeanAE": 0.0508
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "diamonds_data",
@@ -836,14 +882,15 @@
     "nBatches": 1000,
     "bestMethod": "DyS",
     "bestMeanAE": 0.1116,
-    "synWinRate": 0.1961,
+    "synWinRate": 0.1867,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "PACC",
       "syn": "PACC_syn",
       "deltaMeanAE": 0.0315
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "drugs_data",
@@ -854,14 +901,15 @@
     "nBatches": 1000,
     "bestMethod": "DyS",
     "bestMeanAE": 0.0476,
-    "synWinRate": 0.1898,
+    "synWinRate": 0.1931,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "HDy",
       "syn": "HDy_syn",
       "deltaMeanAE": 0.0167
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "energy_data",
@@ -872,14 +920,15 @@
     "nBatches": 1000,
     "bestMethod": "DyS",
     "bestMeanAE": 0.1241,
-    "synWinRate": 0.2396,
+    "synWinRate": 0.2284,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "MS",
       "syn": "MS_syn",
       "deltaMeanAE": 0.0385
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "fifa19_data",
@@ -890,14 +939,15 @@
     "nBatches": 1000,
     "bestMethod": "PACC_syn",
     "bestMeanAE": 0.1104,
-    "synWinRate": 0.37,
+    "synWinRate": 0.3479,
     "familiesImproved": 1,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "PACC",
       "syn": "PACC_syn",
       "deltaMeanAE": -0.0228
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "theorem_data",
@@ -908,14 +958,15 @@
     "nBatches": 1000,
     "bestMethod": "SMM",
     "bestMeanAE": 0.0829,
-    "synWinRate": 0.09,
+    "synWinRate": 0.0812,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "X",
       "syn": "X_syn",
       "deltaMeanAE": 0.0265
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "news_popularity_data",
@@ -926,14 +977,15 @@
     "nBatches": 1000,
     "bestMethod": "PACC",
     "bestMeanAE": 0.1501,
-    "synWinRate": 0.403,
+    "synWinRate": 0.3686,
     "familiesImproved": 5,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "MS",
       "syn": "MS_syn",
       "deltaMeanAE": -0.0302
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "skillcraft_data",
@@ -944,14 +996,15 @@
     "nBatches": 1000,
     "bestMethod": "ACC",
     "bestMeanAE": 0.1537,
-    "synWinRate": 0.369,
+    "synWinRate": 0.3603,
     "familiesImproved": 1,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "MS",
       "syn": "MS_syn",
       "deltaMeanAE": -0.0085
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "superconductor_data",
@@ -962,14 +1015,15 @@
     "nBatches": 1000,
     "bestMethod": "T50",
     "bestMeanAE": 0.0684,
-    "synWinRate": 0.2266,
+    "synWinRate": 0.2161,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "MS2",
       "syn": "MS2_syn",
       "deltaMeanAE": 0.0074
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "turk_student_eval_data",
@@ -980,14 +1034,15 @@
     "nBatches": 1000,
     "bestMethod": "DyS",
     "bestMeanAE": 0.1507,
-    "synWinRate": 0.2179,
+    "synWinRate": 0.198,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "MAX",
       "syn": "MAX_syn",
       "deltaMeanAE": 0.0261
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "video_game_sales_data",
@@ -998,14 +1053,15 @@
     "nBatches": 1000,
     "bestMethod": "PACC_syn",
     "bestMeanAE": 0.1329,
-    "synWinRate": 0.415,
+    "synWinRate": 0.412,
     "familiesImproved": 2,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "ACC",
       "syn": "ACC_syn",
       "deltaMeanAE": -0.0086
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "yeast_data",
@@ -1016,14 +1072,15 @@
     "nBatches": 1000,
     "bestMethod": "T50",
     "bestMeanAE": 0.0842,
-    "synWinRate": 0.2669,
+    "synWinRate": 0.2552,
     "familiesImproved": 1,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "MS",
       "syn": "MS_syn",
       "deltaMeanAE": -0.0011
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "global_covariate_shift2",
@@ -1034,14 +1091,15 @@
     "nBatches": 39,
     "bestMethod": "MS",
     "bestMeanAE": 0.0174,
-    "synWinRate": 0.057,
+    "synWinRate": 0.0769,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "HDy",
       "syn": "HDy_syn",
       "deltaMeanAE": 0.0041
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "horizontal_mix",
@@ -1052,14 +1110,15 @@
     "nBatches": 39,
     "bestMethod": "DyS",
     "bestMeanAE": 0.0041,
-    "synWinRate": 0.0057,
+    "synWinRate": 0.0077,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "HDy",
       "syn": "HDy_syn",
       "deltaMeanAE": 0.0118
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "label_shift_1_1",
@@ -1070,14 +1129,15 @@
     "nBatches": 39,
     "bestMethod": "HDy",
     "bestMeanAE": 0.0015,
-    "synWinRate": 0.0142,
+    "synWinRate": 0.0179,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "HDy",
       "syn": "HDy_syn",
       "deltaMeanAE": 0.0182
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "label_shift_5_5",
@@ -1088,14 +1148,15 @@
     "nBatches": 39,
     "bestMethod": "DyS",
     "bestMeanAE": 0.0031,
-    "synWinRate": 0.0114,
+    "synWinRate": 0.0154,
     "familiesImproved": 0,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "HDy",
       "syn": "HDy_syn",
       "deltaMeanAE": 0.0172
-    }
+    },
+    "nTopline": 10
   },
   {
     "id": "wine",
@@ -1106,13 +1167,14 @@
     "nBatches": 1000,
     "bestMethod": "MS",
     "bestMeanAE": 0.0131,
-    "synWinRate": 0.2227,
+    "synWinRate": 0.2171,
     "familiesImproved": 1,
-    "nFamilies": 9,
+    "nFamilies": 10,
     "biggestGain": {
       "base": "T50",
       "syn": "T50_syn",
       "deltaMeanAE": -0.0349
-    }
+    },
+    "nTopline": 10
   }
 ]

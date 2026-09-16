@@ -2,7 +2,7 @@ import {
   ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer,
 } from 'recharts'
 import { classColor } from '../../lib/resultsDerive'
-import { fmtAE } from '../../lib/resultsFormat'
+import { fmtAE, fmtPick } from '../../lib/resultsFormat'
 
 const LEGEND_CAP = 12
 
@@ -19,13 +19,14 @@ function CalibTooltip({ active, payload, classes }) {
 }
 
 // True vs. estimated prevalence for one method, colored by class. Points on
-// the diagonal are unbiased; above = over-estimated, below = under.
-export default function CalibrationChart({ method, calibration, classes }) {
+// the diagonal are unbiased; above = over-estimated, below = under. For a
+// _topline method `pick` names the detector chosen per class.
+export default function CalibrationChart({ method, calibration, classes, pick, hasTopline }) {
   if (!calibration) {
     return (
       <div className="calib-empty">
         No calibration data computed for <b style={{ color: 'var(--t2)', margin: '0 4px' }}>{method}</b>
-        — only the best method and each _syn family pair carry sampled calibration points.
+        — only the best method and each _syn family pair{hasTopline ? ' (plus their _topline)' : ''} carry sampled calibration points.
       </div>
     )
   }
@@ -44,7 +45,8 @@ export default function CalibrationChart({ method, calibration, classes }) {
   return (
     <div>
       <div style={{ fontSize: 11, color: 'var(--t4)', marginBottom: 6 }}>
-        Calibration · <span style={{ color: 'var(--mint)', fontWeight: 700 }}>{method}</span> · estimated vs. true prevalence · on the line = unbiased
+        Calibration · <span style={{ color: pick ? 'var(--sage)' : 'var(--mint)', fontWeight: 700 }}>{method}</span> · estimated vs. true prevalence · on the line = unbiased
+        {pick && <> · per class: <span className="mono">{fmtPick(pick)}</span></>}
       </div>
       <ResponsiveContainer width="100%" height={260}>
         <ScatterChart margin={{ top: 10, right: 16, bottom: 24, left: 4 }}>
