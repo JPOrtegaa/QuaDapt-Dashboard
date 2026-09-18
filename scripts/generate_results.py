@@ -19,6 +19,11 @@ in every run, computes:
     methods (the base/*_syn family members, their toplines, plus the single
     best method)
 
+  * score-distribution curves (runs that dump raw classifier scores next to
+    the results CSV — see scripts/score_distributions.py): training curves per
+    detector plus the first few test batches with QuaDapt's selected synthetic
+    scores, under scores/<id>/, flagged as `scores` on the manifest entry
+
 Output, per experiment: one JSON per dataset under
 results/generated/<experiment>/<id>.json, plus that experiment's manifest.json
 and general.json. A results/generated/experiments.json indexes the runs and
@@ -40,6 +45,8 @@ import sys
 
 import numpy as np
 import pandas as pd
+
+from score_distributions import write_score_distributions
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RESULTS_DIR = os.path.join(ROOT, "results")
@@ -760,6 +767,10 @@ def build_experiment(exp: dict, datasets_meta: dict) -> dict | None:
         if result is None:
             continue
         dataset, manifest_entry, general_record = result
+        scores = write_score_distributions(os.path.dirname(csv_path), out_dir, dataset["id"])
+        if scores:
+            manifest_entry["scores"] = scores
+            print(f"    scores: {scores['nClasses']} detectors, {scores['nBatches']}/{scores['nBatchesTotal']} batches")
         out_path = os.path.join(out_dir, f"{dataset['id']}.json")
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(dataset, f, separators=(",", ":"))

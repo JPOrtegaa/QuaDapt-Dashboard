@@ -51,3 +51,11 @@ export const SearchIcon = () => (
     <path d="M9 9 12 12" />
   </svg>
 )
+
+// Two overlapping density curves — the score-distributions card.
+export const CurvesIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#74e0a3" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M1 12 C3.5 12 4 3 6 3 C8 3 8.5 12 11 12" />
+    <path d="M3 12 C5.5 12 6 6 8 6 C10 6 10.5 12 13 12" opacity="0.55" />
+  </svg>
+)

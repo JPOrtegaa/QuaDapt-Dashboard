@@ -28,6 +28,11 @@ method (One-vs-Rest, n binary detectors). This repo is the **dashboard only**.
     precomputed from the raw run CSVs by `scripts/generate_results.py`. Runs are declared
     in that script's `EXPERIMENTS` list and indexed by `public/data/results/experiments.json`;
     the tab's experiment switcher picks which run feeds it.
+  - Score distributions card (per dataset, inside the Results tab) ← runs that dump raw
+    classifier scores also get `results/<experiment>/scores/<id>/training.json` plus one
+    `batch_<k>.json` per shipped test batch (KDE curves precomputed by
+    `scripts/score_distributions.py`, capped at `SCORE_BATCH_LIMIT`); the manifest entry
+    carries a `scores` block and the card only renders when it is present.
 - **Update model:** regenerate/drop in a new artifact → rebuild. Static output hosts
   anywhere (e.g. GitHub Pages).
 

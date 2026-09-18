@@ -5,6 +5,7 @@ import MethodRankingCard from './results/MethodRankingCard'
 import FamilyCompareCard from './results/FamilyCompareCard'
 import PrevalenceShiftCard from './results/PrevalenceShiftCard'
 import ClassHeatmapCard from './results/ClassHeatmapCard'
+import ScoreDistributionsCard from './results/scores/ScoreDistributionsCard'
 import GeneralView from './results/general/GeneralView'
 import ExperimentSelector from './results/ExperimentSelector'
 import {
@@ -171,6 +172,14 @@ export default function ResultsTab() {
               selectedMethod={activeMethod}
               onSelectMethod={setSelectedMethod}
             />
+
+            {manifestEntry.scores && (
+              <ScoreDistributionsCard
+                experimentId={activeExperimentId}
+                datasetId={activeId}
+                scores={manifestEntry.scores}
+              />
+            )}
           </div>
         )
       })()}

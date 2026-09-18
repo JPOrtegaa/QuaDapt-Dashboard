@@ -174,3 +174,45 @@ export function useDatasetAcrossRuns(experimentIds, id, enabled) {
 export function useGeneralAcrossRuns(experimentIds, enabled) {
   return useAcrossRuns(generalCache, experimentIds, 'general', enabled)
 }
+
+// ---- score distributions ---------------------------------------------------
+// Runs that dumped raw classifier scores also ship, per dataset:
+//   data/results/<experiment>/scores/<id>/training.json  — every detector's curves
+//   data/results/<experiment>/scores/<id>/batch_<k>.json — one test batch
+// The batch files are small and fetched on scrub, so the cache is what makes
+// stepping back and forth free.
+const scoresCache = new Map()
+
+function useCachedArtifact(key) {
+  const [state, setState] = useState({ status: 'idle', data: null, error: null })
+
+  useEffect(() => {
+    if (!key) return
+    let alive = true
+    setState({ status: 'loading', data: null, error: null })
+    cachedJson(scoresCache, key)
+      .then((data) => {
+        if (alive) setState({ status: 'ready', data, error: null })
+      })
+      .catch((err) => {
+        if (alive) setState({ status: 'error', data: null, error: err.message })
+      })
+    return () => {
+      alive = false
+    }
+  }, [key])
+
+  return state
+}
+
+export function useScoreTraining(experimentId, id) {
+  return useCachedArtifact(experimentId && id ? `${experimentId}/scores/${id}/training` : null)
+}
+
+export function useScoreBatch(experimentId, id, batchIndex, enabled) {
+  const key =
+    enabled && experimentId && id && batchIndex != null
+      ? `${experimentId}/scores/${id}/batch_${String(batchIndex).padStart(4, '0')}`
+      : null
+  return useCachedArtifact(key)
+}
