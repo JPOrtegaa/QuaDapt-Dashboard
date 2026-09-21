@@ -8,6 +8,7 @@ import ClassHeatmapCard from './results/ClassHeatmapCard'
 import ScoreDistributionsCard from './results/scores/ScoreDistributionsCard'
 import GeneralView from './results/general/GeneralView'
 import ExperimentSelector from './results/ExperimentSelector'
+import ToplineToggle from './results/ToplineToggle'
 import {
   useExperiments, useResultsManifest, useResultDataset, useGeneral,
   useDatasetAcrossRuns, useGeneralAcrossRuns,
@@ -61,6 +62,11 @@ export default function ResultsTab() {
   const datasetRuns = useDatasetAcrossRuns(experimentIds, isGeneral ? null : activeId, comparing)
   const generalRuns = useGeneralAcrossRuns(experimentIds, comparing && isGeneral)
 
+  // Whether the <base>_topline oracles take part: tab-level for the same
+  // reason as compareMode — the per-dataset charts and the General method
+  // charts must agree. Runs without toplines are unaffected (toggle hidden).
+  const [showTopline, setShowTopline] = useState(true)
+
   if (eStatus === 'error') return <div className="state err">Failed to load data/results/experiments.json — {eError}</div>
   if (eStatus === 'loading' || mStatus === 'loading') return <div className="state">Loading results…</div>
   if (mStatus === 'error') return <div className="state err">Failed to load data/results/{activeExperimentId}/manifest.json — {mError}</div>
@@ -69,8 +75,9 @@ export default function ResultsTab() {
   const selectorDatasets = [GENERAL_ENTRY, ...manifest]
   const manifestEntry = manifest.find((d) => d.id === activeId)
   const hasTopline = manifest.some((d) => d.nTopline > 0)
+  const toplineOn = hasTopline && showTopline
   const methodsMeta = manifestEntry
-    ? `${manifestEntry.nMethods} methods${manifestEntry.nTopline ? ` (+${manifestEntry.nTopline} topline)` : ''}`
+    ? `${manifestEntry.nMethods} methods${toplineOn && manifestEntry.nTopline ? ` (+${manifestEntry.nTopline} topline)` : ''}`
     : '— methods'
 
   return (
@@ -86,6 +93,7 @@ export default function ResultsTab() {
             selectedId={activeExperimentId}
             onSelect={setExperimentId}
           />
+          <ToplineToggle value={showTopline} onChange={setShowTopline} hasTopline={hasTopline} />
           <span className="meta">
             {isGeneral
               ? `${general?.nDatasets ?? manifest.length} datasets · cross-dataset overview`
@@ -105,7 +113,7 @@ export default function ResultsTab() {
           <>
             Absolute error per test sample, computed from the <span className="mono">*_p_normalized</span> columns
             against true prevalence. <span className="mint">Mint = our adapted methods (_syn)</span>, grey = classic baselines
-            {hasTopline && (
+            {toplineOn && (
               <>, <span className="sage">sage = _topline</span> (per class, the better of base / _syn — an oracle upper bound)</>
             )}.
           </>
@@ -130,6 +138,7 @@ export default function ResultsTab() {
             byRun: generalRuns.byRun,
             compareStatus: generalRuns.status,
           }}
+          showTopline={toplineOn}
         />
       )}
 
@@ -139,17 +148,21 @@ export default function ResultsTab() {
       {!isGeneral && dStatus === 'error' && <div className="state err">Failed to load results/{activeExperimentId}/{activeId}.json — {dError}</div>}
 
       {!isGeneral && dStatus === 'ready' && dataset && (() => {
+        // Single choke point for the topline toggle: every per-dataset card
+        // reads this list, so a hidden topline can't be the selected method.
+        const methods = toplineOn ? dataset.methods : dataset.methods.filter((m) => !m.isTopline)
         const activeMethod =
-          dataset.methods.find((m) => m.name === selectedMethod)?.name ?? dataset.methods[0]?.name ?? null
+          methods.find((m) => m.name === selectedMethod)?.name ?? methods[0]?.name ?? null
         const activeFamily =
           dataset.families.find((f) => f.base === selectedFamilyBase) ?? dataset.families[0] ?? null
 
         return (
           <div className="grid" style={{ marginTop: 18 }}>
             <MethodRankingCard
-              methods={dataset.methods}
+              methods={methods}
               selectedMethod={activeMethod}
               onSelectMethod={setSelectedMethod}
+              showTopline={toplineOn}
               mode={compareMode}
               onModeChange={setCompareMode}
               experiments={experiments}
@@ -168,7 +181,7 @@ export default function ResultsTab() {
             {activeFamily && <PrevalenceShiftCard tv={dataset.tv} family={activeFamily} />}
 
             <ClassHeatmapCard
-              dataset={dataset}
+              dataset={{ ...dataset, methods }}
               selectedMethod={activeMethod}
               onSelectMethod={setSelectedMethod}
             />

@@ -7,7 +7,7 @@ in every run, computes:
 
   * per-sample absolute error (AE), from the *_p_normalized columns against
     the *_real (true prevalence) columns — mean absolute error across classes
-  * per-method ranking (mean AE, IQR)
+  * per-method ranking (mean AE, IQR) — ranks kept both with and without toplines
   * per-method, per-class mean AE (for the "mean AE by class" heatmap)
   * base -> *_syn family pairs (delta mean AE, win-rate, paired per-batch AE)
   * <base>_topline oracle methods (runs flagged "topline" only): per class,
@@ -516,8 +516,14 @@ def compute_dataset(group: str | None, csv_path: str, topline: bool = False) -> 
         "familiesImproved": families_improved,
         "nFamilies": len(families),
         "perFamilyDelta": {f["base"]: f["deltaMeanAE"] for f in families},
-        # methods_out is sorted best -> worst, so position is the rank (1-based)
+        # methods_out is sorted best -> worst, so position is the rank (1-based).
+        # Two pools: every method (toplines rank above their base/syn), and real
+        # methods only, for the UI's "without topline" view.
         "methodRanks": {m["name"]: i + 1 for i, m in enumerate(methods_out)},
+        "methodRanksNoTopline": {
+            m["name"]: i + 1
+            for i, m in enumerate(m for m in methods_out if not m.get("isTopline"))
+        },
         "methodMeanAE": {m["name"]: m["meanAE"] for m in methods_out},
         "toplineMethods": list(topline_picks),
         "prior": {
@@ -689,13 +695,19 @@ def build_general(records, datasets_meta):
     predictors.sort(key=lambda p: (p["corr"] is None, -abs(p["corr"] or 0)))
 
     # Global method ranking: mean rank of each method across all datasets it
-    # appears in (lower = better). Syn variants and toplines flagged for
+    # appears in (lower = better). `meanRank` ranks toplines in the same pool
+    # as real methods; `meanRankNoTopline` ranks real methods among themselves
+    # (absent on toplines) so the UI can drop the oracles without leaving the
+    # real methods' ranks shifted. Syn variants and toplines flagged for
     # coloring (`isTopline` only present on topline entries).
     rank_lists = {}
+    rank_lists_no_topline = {}
     topline_names = set()
     for rec in records:
         for name, rank in rec["methodRanks"].items():
             rank_lists.setdefault(name, []).append(rank)
+        for name, rank in rec["methodRanksNoTopline"].items():
+            rank_lists_no_topline.setdefault(name, []).append(rank)
         topline_names.update(rec.get("toplineMethods", []))
     method_ranking = []
     for name, ranks in rank_lists.items():
@@ -707,6 +719,8 @@ def build_general(records, datasets_meta):
         }
         if name in topline_names:
             entry["isTopline"] = True
+        else:
+            entry["meanRankNoTopline"] = clean(float(np.mean(rank_lists_no_topline[name])), 2)
         method_ranking.append(entry)
     method_ranking.sort(key=lambda m: m["meanRank"])
 

@@ -12,7 +12,7 @@ import GlobalMethodAECard from './GlobalMethodAECard'
 // dataset×family heatmap, and the two global method rankings (by rank, and
 // by mean AE with its cross-run compare). `onPickDataset` drills from any
 // dataset mark back into its per-dataset results.
-export default function GeneralView({ general, onPickDataset, compare }) {
+export default function GeneralView({ general, onPickDataset, compare, showTopline = true }) {
   const [axisKey, setAxisKey] = useState(
     general.summary.topPredictor?.key ?? general.metadataFields[0].key,
   )
@@ -37,9 +37,9 @@ export default function GeneralView({ general, onPickDataset, compare }) {
 
         <FamilyHeatmapCard general={general} onPickDataset={onPickDataset} />
 
-        <GlobalMethodRankCard general={general} />
+        <GlobalMethodRankCard general={general} showTopline={showTopline} />
 
-        <GlobalMethodAECard general={general} {...compare} />
+        <GlobalMethodAECard general={general} {...compare} showTopline={showTopline} />
       </div>
     </>
   )

@@ -147,15 +147,18 @@ export function aggregateMethodAE(general, datasetIds) {
 // Grouped-bar rows: one row per method present in EVERY run, one numeric key
 // per run plus its `__err` [below, above] pair for the IQR whisker. Sorted by
 // the reference run's mean AE so the chart still reads best -> worst and
-// switching the reference re-sorts, making rank changes visible.
-export function buildRunCompareRows(statsByRun, runIds, referenceId, minCoverage = 0) {
+// switching the reference re-sorts, making rank changes visible. With
+// `includeTopline` off the oracles leave the pool entirely (not counted as
+// hidden either — they were never candidates).
+export function buildRunCompareRows(statsByRun, runIds, referenceId, minCoverage = 0, includeTopline = true) {
   const present = runIds.filter((id) => statsByRun[id])
   if (!present.length) return { rows: [], runIds: present, hidden: 0, total: 0 }
 
   const covered = (s) => s && (s.n == null || s.n >= minCoverage)
   const reference = statsByRun[referenceId] ?? statsByRun[present[0]]
-  const total = Object.keys(reference).length
-  const names = Object.keys(reference)
+  const candidates = Object.keys(reference).filter((name) => includeTopline || !reference[name].isTopline)
+  const total = candidates.length
+  const names = candidates
     .filter((name) => present.every((id) => covered(statsByRun[id][name])))
     .sort((a, b) => reference[a].meanAE - reference[b].meanAE)
 

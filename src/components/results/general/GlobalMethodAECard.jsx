@@ -21,6 +21,7 @@ export default function GlobalMethodAECard({
   referenceId,
   byRun,
   compareStatus,
+  showTopline = true,
 }) {
   const compare = mode === 'compare' && compareStatus === 'ready'
   const runs = compare ? experiments.filter((e) => byRun[e.id]?.methodDatasetAE) : []
@@ -40,6 +41,7 @@ export default function GlobalMethodAECard({
     sources.map((e) => e.id),
     compare ? referenceId : sources[0].id,
     datasetIds.length,
+    showTopline,
   )
 
   const parts = [

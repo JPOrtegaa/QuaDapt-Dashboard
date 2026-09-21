@@ -24,6 +24,7 @@ export default function MethodRankingCard({
   methods,
   selectedMethod,
   onSelectMethod,
+  showTopline = true,
   mode,
   onModeChange,
   experiments,
@@ -40,7 +41,7 @@ export default function MethodRankingCard({
     runs.map((e) => [e.id, methodStatsFromDataset(byRun[e.id])]),
   )
   const { rows, hidden } = compare
-    ? buildRunCompareRows(statsByRun, runs.map((e) => e.id), referenceId)
+    ? buildRunCompareRows(statsByRun, runs.map((e) => e.id), referenceId, 0, showTopline)
     : { rows: [], hidden: 0 }
   // An empty intersection would render an axis and nothing else — say so.
   const usable = compare && compareStatus === 'ready' && rows.length > 0

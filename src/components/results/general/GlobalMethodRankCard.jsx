@@ -14,7 +14,7 @@ function RankTooltip({ active, payload, total }) {
   return (
     <div className="rt-tooltip">
       <div className="tt-h">{d.name}</div>
-      <div className="tt-r"><span>mean rank</span><b>{d.meanRank.toFixed(2)}</b></div>
+      <div className="tt-r"><span>mean rank</span><b>{d.rank.toFixed(2)}</b></div>
       <div className="tt-r"><span>over</span><b>{d.coverage}/{total} datasets</b></div>
     </div>
   )
@@ -22,15 +22,21 @@ function RankTooltip({ active, payload, total }) {
 
 // Average rank of each method across every dataset it appears in (1 = best).
 // Restricted to methods present in ALL datasets so the ranks are comparable.
-export default function GlobalMethodRankCard({ general }) {
-  const data = general.methodRanking
+// Without toplines the artifact's second rank pool (`meanRankNoTopline`, real
+// methods ranked among themselves) is plotted, so dropping the oracles doesn't
+// leave every real method's rank shifted by the toplines above it.
+export default function GlobalMethodRankCard({ general, showTopline = true }) {
+  const pool = showTopline
+    ? general.methodRanking
+    : general.methodRanking.filter((m) => !m.isTopline)
+  const data = pool
     .filter((m) => m.coverage === general.nDatasets)
-    .slice()
-    .sort((a, b) => a.meanRank - b.meanRank)
-  const excluded = general.methodRanking.length - data.length
+    .map((m) => ({ ...m, rank: showTopline ? m.meanRank : m.meanRankNoTopline ?? m.meanRank }))
+    .sort((a, b) => a.rank - b.rank)
+  const excluded = pool.length - data.length
   const synSet = new Set(data.filter((m) => m.isSyn).map((m) => m.name))
   const toplineSet = new Set(data.filter((m) => m.isTopline).map((m) => m.name))
-  const maxRank = Math.max(...data.map((m) => m.meanRank))
+  const maxRank = Math.max(...data.map((m) => m.rank))
   const height = data.length * ROW_H + 24
   const legend = `mint = our adapted (_syn)${toplineSet.size ? ', sage = _topline oracle' : ''}, grey = classic`
 
@@ -63,12 +69,12 @@ export default function GlobalMethodRankCard({ general }) {
               tick={<MethodTick synSet={synSet} toplineSet={toplineSet} fontSize={10} />}
             />
             <Tooltip content={<RankTooltip total={general.nDatasets} />} cursor={{ fill: 'rgba(255,255,255,.04)' }} />
-            <Bar dataKey="meanRank" radius={[0, 3, 3, 0]} maxBarSize={11} isAnimationActive animationDuration={700}>
+            <Bar dataKey="rank" radius={[0, 3, 3, 0]} maxBarSize={11} isAnimationActive animationDuration={700}>
               {data.map((m) => (
                 <Cell key={m.name} fill={methodColor(m)} />
               ))}
               <LabelList
-                dataKey="meanRank"
+                dataKey="rank"
                 position="right"
                 formatter={(v) => v.toFixed(1)}
                 style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 10, fill: '#c8ccc6' }}
