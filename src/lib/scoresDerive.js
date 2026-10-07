@@ -94,6 +94,28 @@ export function scoreState({ training, view, model, batch }) {
   }
 
   const o = batch.ovr[model]
+
+  // Newer runs store the true label of every incoming score: draw the batch's
+  // real positives / negatives filled, QuaDapt's synthetic picks dashed.
+  if (o.incPos) {
+    return {
+      yMax,
+      series: [
+        series('incPos', `incoming positive (${model})`, o.incPos, batch.scale, { color: POSITIVE, ...SOLID }),
+        series('incNeg', 'incoming negative (rest)', o.incNeg, batch.scale, { color: NEGATIVE, ...SOLID }),
+        series('selP', 'selected positive (synthetic)', o.selP, batch.scale, { color: POSITIVE, ...DASHED }),
+        series('selN', 'selected negative (synthetic)', o.selN, batch.scale, { color: NEGATIVE, ...DASHED }),
+      ],
+      stats: [
+        { label: 'Incoming +/−', value: `${o.nPos}/${o.nNeg}` },
+        { label: 'Selected +', value: o.nSelP.toLocaleString('en-US'), color: POSITIVE },
+        { label: 'Selected −', value: o.nSelN.toLocaleString('en-US'), color: NEGATIVE },
+      ],
+      note: `Filled = the batch as scored by the ${model}-vs-rest detector, split by its true labels. Dashed = the synthetic positive / negative scores QuaDapt selected to explain it. Each curve is normalized on its own — compare shapes, not heights.`,
+      caption: `batch ${batch.id} · ${model}-vs-rest · incoming = ${o.nPos} positive + ${o.nNeg} negative · selected synthetic = ${o.nSelP.toLocaleString('en-US')} + ${o.nSelN.toLocaleString('en-US')}`,
+    }
+  }
+
   return {
     yMax,
     series: [

@@ -33,6 +33,14 @@ method (One-vs-Rest, n binary detectors). This repo is the **dashboard only**.
     `batch_<k>.json` per shipped test batch (KDE curves precomputed by
     `scripts/score_distributions.py`, capped at `SCORE_BATCH_LIMIT`); the manifest entry
     carries a `scores` block and the card only renders when it is present.
+  - Detector-gated runs (`"detectors": [...]` on the `EXPERIMENTS` entry, e.g. `ours_cdt_ibdd`,
+    whose `<base>_cdt` / `<base>_ibdd` methods use `_syn` on drift and the base otherwise):
+    each `<id>.json` also carries `variantBoxes` (method × classic/cdt/ibdd/syn AE box stats,
+    all classes + per class) and `detectors` (CDT/IBDD calibration vs. test histograms,
+    thresholds, per-batch drift flags — `scripts/drift_detectors.py`). The `detectors` field
+    is copied to `experiments.json`, and the UI then switches every chart to the
+    classic/cdt/ibdd/syn palette (royalblue/seagreen/darkorange/crimson, via
+    `PaletteContext`).
 - **Update model:** regenerate/drop in a new artifact → rebuild. Static output hosts
   anywhere (e.g. GitHub Pages).
 

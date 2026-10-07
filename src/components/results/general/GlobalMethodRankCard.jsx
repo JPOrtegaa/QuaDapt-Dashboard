@@ -4,7 +4,8 @@ import {
 import Card from '../../Card'
 import { BarsIcon } from '../../Icons'
 import MethodTick from '../MethodTick'
-import { methodColor } from '../../../lib/resultsDerive'
+import { usePalette } from '../PaletteContext'
+import { methodColor, VARIANT_PALETTES } from '../../../lib/resultsDerive'
 
 const ROW_H = 19
 
@@ -34,11 +35,13 @@ export default function GlobalMethodRankCard({ general, showTopline = true }) {
     .map((m) => ({ ...m, rank: showTopline ? m.meanRank : m.meanRankNoTopline ?? m.meanRank }))
     .sort((a, b) => a.rank - b.rank)
   const excluded = pool.length - data.length
-  const synSet = new Set(data.filter((m) => m.isSyn).map((m) => m.name))
-  const toplineSet = new Set(data.filter((m) => m.isTopline).map((m) => m.name))
+  const palette = usePalette()
+  const hasTopline = data.some((m) => m.isTopline)
   const maxRank = Math.max(...data.map((m) => m.rank))
   const height = data.length * ROW_H + 24
-  const legend = `mint = our adapted (_syn)${toplineSet.size ? ', sage = _topline oracle' : ''}, grey = classic`
+  const legend = palette === VARIANT_PALETTES.family
+    ? `blue = classic, green = QuaDapt_cdt, orange = QuaDapt_ibdd, red = QuaDapt (_syn)${hasTopline ? ', sage = _topline oracle' : ''}`
+    : `mint = our adapted (_syn)${hasTopline ? ', sage = _topline oracle' : ''}, grey = classic`
 
   return (
     <Card
@@ -66,12 +69,12 @@ export default function GlobalMethodRankCard({ general, showTopline = true }) {
               tickLine={false}
               axisLine={false}
               interval={0}
-              tick={<MethodTick synSet={synSet} toplineSet={toplineSet} fontSize={10} />}
+              tick={<MethodTick fontSize={10} />}
             />
             <Tooltip content={<RankTooltip total={general.nDatasets} />} cursor={{ fill: 'rgba(255,255,255,.04)' }} />
             <Bar dataKey="rank" radius={[0, 3, 3, 0]} maxBarSize={11} isAnimationActive animationDuration={700}>
               {data.map((m) => (
-                <Cell key={m.name} fill={methodColor(m)} />
+                <Cell key={m.name} fill={methodColor(m, palette)} />
               ))}
               <LabelList
                 dataKey="rank"

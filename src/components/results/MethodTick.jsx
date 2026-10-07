@@ -1,12 +1,14 @@
-import { SAGE } from '../../lib/resultsDerive'
+import { usePalette } from './PaletteContext'
+import { methodLabelColor, isAdaptedVariant } from '../../lib/resultsDerive'
 
 // Y-axis tick for every method-ranking chart. In compare mode the bar color
-// encodes the run, so this label is the ONLY thing marking our adapted (_syn)
-// methods and the _topline oracles apart from the classic baselines — keep it
-// identical everywhere.
-export default function MethodTick({ x, y, payload, synSet, toplineSet = new Set(), fontSize = 10.5 }) {
-  const isSyn = synSet.has(payload.value)
-  const isTopline = toplineSet.has(payload.value)
+// encodes the run, so this label is the ONLY thing marking our adapted
+// methods (_syn, the detector-gated _cdt / _ibdd) and the _topline oracles
+// apart from the classic baselines — keep it identical everywhere. The
+// category comes from the method name, colored by the active run's palette.
+export default function MethodTick({ x, y, payload, fontSize = 10.5 }) {
+  const palette = usePalette()
+  const m = { name: payload.value }
   return (
     <text
       x={x}
@@ -15,8 +17,8 @@ export default function MethodTick({ x, y, payload, synSet, toplineSet = new Set
       textAnchor="end"
       fontFamily="'JetBrains Mono',monospace"
       fontSize={fontSize}
-      fontWeight={isSyn || isTopline ? 700 : 500}
-      fill={isTopline ? SAGE : isSyn ? '#eef1ec' : '#93998f'}
+      fontWeight={isAdaptedVariant(m) ? 700 : 500}
+      fill={methodLabelColor(m, palette)}
     >
       {payload.value}
     </text>

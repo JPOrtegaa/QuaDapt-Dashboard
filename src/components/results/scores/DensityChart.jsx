@@ -44,6 +44,9 @@ export default function DensityChart({ x, series, yMax }) {
         />
         <YAxis
           domain={[0, yMax ?? 'auto']}
+          // Keep the artifact's scale: a curve on a few samples (true positives
+          // of a rare class) may exceed it and clips instead of rescaling.
+          allowDataOverflow={yMax != null}
           tick={{ fill: '#5f665e', fontSize: 10 }}
           tickLine={false}
           axisLine={false}

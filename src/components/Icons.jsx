@@ -52,6 +52,23 @@ export const SearchIcon = () => (
   </svg>
 )
 
+// Two box-and-whisker glyphs — the method x family box plot.
+export const BoxPlotIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#74e0a3" strokeWidth="1.4" strokeLinecap="round">
+    <path d="M3.5 1v2.5M3.5 9.5V13M10.5 3v3M10.5 10.5V13" />
+    <rect x="1.5" y="3.5" width="4" height="6" rx="1" />
+    <rect x="8.5" y="6" width="4" height="4.5" rx="1" />
+  </svg>
+)
+
+// A threshold line crossed by a signal — the drift-detector card.
+export const GateIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#74e0a3" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M1 5h12" strokeDasharray="2 2" opacity="0.6" />
+    <path d="M1 12 4 9l2.5 2L9 3l2 4 2-1" />
+  </svg>
+)
+
 // Two overlapping density curves — the score-distributions card.
 export const CurvesIcon = () => (
   <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#74e0a3" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">

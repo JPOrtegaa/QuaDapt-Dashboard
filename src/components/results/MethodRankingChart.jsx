@@ -2,6 +2,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ErrorBar, LabelList, ResponsiveContainer,
 } from 'recharts'
 import MethodTick from './MethodTick'
+import { usePalette } from './PaletteContext'
 import { methodColor } from '../../lib/resultsDerive'
 import { fmtAE } from '../../lib/resultsFormat'
 
@@ -20,12 +21,12 @@ function RankTooltip({ active, payload }) {
 }
 
 // Horizontal bar ranking, sorted best -> worst (methods already arrive
-// pre-sorted from generate_results.py). Mint bars = _syn variants, sage =
-// _topline oracles, grey = classic baselines; whiskers show the per-method AE
+// pre-sorted from generate_results.py). Bars are colored by method category
+// under the run's palette (mint _syn / sage _topline / grey classic, or the
+// classic / cdt / ibdd / syn family colors); whiskers show the per-method AE
 // interquartile range.
 export default function MethodRankingChart({ methods, selected, onSelect }) {
-  const synSet = new Set(methods.filter((m) => m.isSyn).map((m) => m.name))
-  const toplineSet = new Set(methods.filter((m) => m.isTopline).map((m) => m.name))
+  const palette = usePalette()
   const data = methods.map((m) => ({
     name: m.name,
     meanAE: m.meanAE,
@@ -33,6 +34,7 @@ export default function MethodRankingChart({ methods, selected, onSelect }) {
     q3: m.q3,
     isSyn: m.isSyn,
     isTopline: Boolean(m.isTopline),
+    variant: m.variant,
     err: [+(m.meanAE - m.q1).toFixed(3), +(m.q3 - m.meanAE).toFixed(3)],
   }))
   const maxAE = Math.max(...data.map((d) => d.q3 ?? d.meanAE))
@@ -58,7 +60,7 @@ export default function MethodRankingChart({ methods, selected, onSelect }) {
             tickLine={false}
             axisLine={false}
             interval={0}
-            tick={<MethodTick synSet={synSet} toplineSet={toplineSet} />}
+            tick={<MethodTick />}
           />
           <Tooltip content={<RankTooltip />} cursor={{ fill: 'rgba(255,255,255,.04)' }} />
           <Bar
@@ -74,7 +76,7 @@ export default function MethodRankingChart({ methods, selected, onSelect }) {
             {data.map((d) => (
               <Cell
                 key={d.name}
-                fill={methodColor(d)}
+                fill={methodColor(d, palette)}
                 fillOpacity={!selected || selected === d.name ? 1 : 0.4}
               />
             ))}

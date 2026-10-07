@@ -8,20 +8,60 @@ export const GREY = '#7f8a80' // classic baselines
 export const AMBER = '#e0a750' // regression / base-better
 export const SAGE = '#c3e29a' // <base>_topline: per class, the better of base / syn (oracle)
 
-// Three-way method category color: topline > syn > classic.
-export function methodColor(m) {
-  return m.isTopline ? SAGE : m.isSyn ? MINT : GREY
+// Method category -> color, per run. `default`: mint = our adapted (_syn)
+// methods, grey = classic, sage = _topline. `family` (runs that gate QuaDapt
+// with drift detectors): the classic / cdt / ibdd / syn palette of the
+// experiment repo's analysis notebooks (royalblue / seagreen / darkorange /
+// crimson), so the dashboard reads like those figures.
+export const VARIANT_PALETTES = {
+  default: { classic: GREY, cdt: GREY, ibdd: GREY, syn: MINT, topline: SAGE },
+  family: { classic: '#4169e1', cdt: '#2e8b57', ibdd: '#ff8c00', syn: '#dc143c', topline: SAGE },
+}
+export const VARIANT_LABELS = {
+  classic: 'classic',
+  cdt: 'QuaDapt_cdt',
+  ibdd: 'QuaDapt_ibdd',
+  syn: 'QuaDapt (_syn)',
+  topline: '_topline',
 }
 
 // Name-based fallbacks for artifacts that carry no flags (general.json's
-// methodDatasetAE matrix). Mirror SYN_ALIASES / the `_topline` suffix in
-// scripts/generate_results.py.
+// methodDatasetAE matrix, runs generated before `variant` existed). Mirror
+// SYN_ALIASES / method_variant() in scripts/generate_results.py.
 const SYN_ALIASES = new Set(['DySyn'])
 export function isSynName(name) {
   return name.endsWith('_syn') || SYN_ALIASES.has(name)
 }
 export function isToplineName(name) {
   return name.endsWith('_topline')
+}
+export function methodVariant(name) {
+  if (isToplineName(name)) return 'topline'
+  if (name.endsWith('_cdt')) return 'cdt'
+  if (name.endsWith('_ibdd')) return 'ibdd'
+  if (isSynName(name)) return 'syn'
+  return 'classic'
+}
+function variantOf(m) {
+  return m.variant ?? (m.isTopline ? 'topline' : m.isSyn ? 'syn' : methodVariant(m.name ?? ''))
+}
+
+// Category color of a method entry under the active run's palette.
+export function methodColor(m, palette = VARIANT_PALETTES.default) {
+  return palette[variantOf(m)]
+}
+
+// Y-axis label color: the classic baselines stay muted in the default palette
+// (mint/sage bars carry the signal); the family palette names every variant.
+export function methodLabelColor(m, palette = VARIANT_PALETTES.default) {
+  const v = variantOf(m)
+  if (palette === VARIANT_PALETTES.default) {
+    return v === 'topline' ? SAGE : v === 'syn' ? '#eef1ec' : '#93998f'
+  }
+  return palette[v]
+}
+export function isAdaptedVariant(m) {
+  return variantOf(m) !== 'classic'
 }
 
 // In cross-run compare mode the bar color encodes the *run*, not syn-vs-base
@@ -91,6 +131,7 @@ export function methodStatsFromDataset(dataset) {
   for (const m of dataset.methods) {
     stats[m.name] = {
       meanAE: m.meanAE, q1: m.q1, q3: m.q3, isSyn: m.isSyn, isTopline: Boolean(m.isTopline),
+      variant: m.variant ?? methodVariant(m.name),
     }
   }
   return stats
@@ -138,6 +179,7 @@ export function aggregateMethodAE(general, datasetIds) {
       q3: quantile(values, 0.75),
       isSyn: isSynName(name),
       isTopline: isToplineName(name),
+      variant: methodVariant(name),
       n: values.length,
     }
   }
@@ -163,7 +205,9 @@ export function buildRunCompareRows(statsByRun, runIds, referenceId, minCoverage
     .sort((a, b) => reference[a].meanAE - reference[b].meanAE)
 
   const rows = names.map((name) => {
-    const row = { name, isSyn: reference[name].isSyn, isTopline: reference[name].isTopline }
+    const row = {
+      name, isSyn: reference[name].isSyn, isTopline: reference[name].isTopline, variant: reference[name].variant,
+    }
     for (const id of present) {
       const s = statsByRun[id][name]
       row[id] = s.meanAE

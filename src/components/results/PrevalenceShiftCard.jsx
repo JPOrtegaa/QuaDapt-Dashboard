@@ -3,7 +3,8 @@ import {
 } from 'recharts'
 import Card from '../Card'
 import { RadialIcon } from '../Icons'
-import { prevalenceShiftBins, MINT, GREY } from '../../lib/resultsDerive'
+import { usePalette } from './PaletteContext'
+import { prevalenceShiftBins } from '../../lib/resultsDerive'
 import { fmtAE } from '../../lib/resultsFormat'
 
 function ShiftTooltip({ active, payload }) {
@@ -23,6 +24,7 @@ function ShiftTooltip({ active, payload }) {
 // has drifted from the dataset's global class prior, binned into equal-width
 // TV-distance buckets. Bars show how many test samples land in each bucket.
 export default function PrevalenceShiftCard({ tv, family }) {
+  const { syn: SYN, classic: BASE } = usePalette()
   if (!family) return null
   const bins = prevalenceShiftBins(tv, family.aeBase, family.aeSyn)
   const maxAE = Math.max(...bins.map((b) => Math.max(b.meanAEBase ?? 0, b.meanAESyn ?? 0)))
@@ -32,7 +34,7 @@ export default function PrevalenceShiftCard({ tv, family }) {
     <Card
       wide
       icon={<RadialIcon />}
-      title={<>Error vs. prevalence shift — <span style={{ color: 'var(--mint)' }}>{family.base}</span></>}
+      title={<>Error vs. prevalence shift — <span style={{ color: SYN }}>{family.base}</span></>}
       subtitle="x = total-variation distance from the global prior · y = mean AE in each drift bin · bars = sample count"
       style={{ padding: '22px 24px' }}
     >
@@ -71,9 +73,9 @@ export default function PrevalenceShiftCard({ tv, family }) {
             type="monotone"
             dataKey="meanAEBase"
             name={family.base}
-            stroke={GREY}
+            stroke={BASE}
             strokeWidth={2}
-            dot={{ r: 3, fill: GREY, strokeWidth: 0 }}
+            dot={{ r: 3, fill: BASE, strokeWidth: 0 }}
             isAnimationActive
             animationDuration={700}
             connectNulls
@@ -83,9 +85,9 @@ export default function PrevalenceShiftCard({ tv, family }) {
             type="monotone"
             dataKey="meanAESyn"
             name={family.syn}
-            stroke={MINT}
+            stroke={SYN}
             strokeWidth={2.5}
-            dot={{ r: 3, fill: MINT, strokeWidth: 0 }}
+            dot={{ r: 3, fill: SYN, strokeWidth: 0 }}
             isAnimationActive
             animationDuration={700}
             connectNulls

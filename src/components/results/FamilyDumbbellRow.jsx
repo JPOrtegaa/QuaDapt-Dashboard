@@ -1,8 +1,13 @@
+import { usePalette } from './PaletteContext'
+import { VARIANT_PALETTES } from '../../lib/resultsDerive'
 import { fmtDelta, fmtPct } from '../../lib/resultsFormat'
 
 // One base -> _syn family: a mini dumbbell (grey dot = base AE, mint dot =
 // _syn AE) on a shared 0..maxAE track, plus the delta and paired win-rate.
 export default function FamilyDumbbellRow({ family, maxAE, selected, onSelect }) {
+  const palette = usePalette()
+  // Default palette keeps the stylesheet's grey / mint dots; the family palette paints them.
+  const dotColor = (v) => (palette === VARIANT_PALETTES.family ? { background: palette[v] } : null)
   const baseX = (family.meanAEBase / maxAE) * 100
   const synX = (family.meanAESyn / maxAE) * 100
   const improved = family.deltaMeanAE < 0
@@ -19,8 +24,8 @@ export default function FamilyDumbbellRow({ family, maxAE, selected, onSelect })
             background: improved ? 'rgba(116,224,163,.4)' : 'rgba(224,167,80,.4)',
           }}
         />
-        <div className="fam-dot base" style={{ left: `${baseX}%` }} />
-        <div className="fam-dot syn" style={{ left: `${synX}%` }} />
+        <div className="fam-dot base" style={{ left: `${baseX}%`, ...dotColor('classic') }} />
+        <div className="fam-dot syn" style={{ left: `${synX}%`, ...dotColor('syn') }} />
       </div>
       <div className="fam-delta" style={{ color: improved ? 'var(--mint)' : 'var(--amber)' }}>
         {fmtDelta(family.deltaMeanAE)} AE

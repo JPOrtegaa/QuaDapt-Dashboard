@@ -1,5 +1,15 @@
 [
   {
+    "id": "ours_cdt_ibdd",
+    "name": "Ours \u00b7 CDT/IBDD gated",
+    "desc": "Ours datasets, batch size 100 \u2014 QuaDapt gated by the CDT / IBDD drift detectors",
+    "nDatasets": 13,
+    "detectors": [
+      "cdt",
+      "ibdd"
+    ]
+  },
+  {
     "id": "ovr_corrected",
     "name": "OvR corrected",
     "desc": "Corrected One-vs-Rest run",

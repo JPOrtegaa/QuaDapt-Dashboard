@@ -5,6 +5,7 @@ import { CurvesIcon } from '../../Icons'
 import ScoreSourceToggle from './ScoreSourceToggle'
 import DetectorPills from './DetectorPills'
 import BatchScrubber from './BatchScrubber'
+import DetectorVerdict from './DetectorVerdict'
 import DensityLegend from './DensityLegend'
 import DensityChart from './DensityChart'
 import { useScoreTraining, useScoreBatch } from '../../../data/useResults'
@@ -16,8 +17,10 @@ const SUBTITLE = 'what each detector sees · kernel density of classifier scores
 // the validation scores each one-vs-rest detector was fitted on, and, per
 // test batch, the unlabeled incoming scores next to the synthetic positive /
 // negative scores QuaDapt selected to explain them. Rendered only for runs
-// that dumped raw scores (`manifest.scores`).
-export default function ScoreDistributionsCard({ experimentId, datasetId, scores }) {
+// that dumped raw scores (`manifest.scores`). In detector-gated runs
+// (`detectors`, from the dataset JSON) the test view also says, per batch,
+// whether each detector sent its gated methods to these synthetic scores.
+export default function ScoreDistributionsCard({ experimentId, datasetId, scores, detectors = null }) {
   const [view, setView] = useState('training')
   const [model, setModel] = useState(null)
   const [batchIndex, setBatchIndex] = useState(0)
@@ -60,6 +63,14 @@ export default function ScoreDistributionsCard({ experimentId, datasetId, scores
               total={scores.nBatchesTotal}
               batchId={batch?.id ?? training.batchIds[batchIndex]}
               onChange={setBatchIndex}
+            />
+          )}
+
+          {isTest && detectors && activeModel !== MULTICLASS && (
+            <DetectorVerdict
+              detectors={detectors}
+              model={activeModel}
+              batchIndex={Number(training.batchIds[batchIndex])}
             />
           )}
 

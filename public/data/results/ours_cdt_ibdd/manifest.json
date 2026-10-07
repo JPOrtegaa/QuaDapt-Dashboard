@@ -1,0 +1,314 @@
+[
+  {
+    "id": "avila",
+    "name": "Avila",
+    "source": "ours",
+    "nClasses": 12,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "PACC_cdt",
+    "bestMeanAE": 0.0627,
+    "synWinRate": 0.2692,
+    "familiesImproved": 2,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "PACC",
+      "syn": "PACC_syn",
+      "deltaMeanAE": -0.0093
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 12,
+      "nBatches": 25,
+      "nBatchesTotal": 1000
+    }
+  },
+  {
+    "id": "chessgame",
+    "name": "Chess (King-Rook vs King)",
+    "source": "ours",
+    "nClasses": 18,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "MAX_syn",
+    "bestMeanAE": 0.0486,
+    "synWinRate": 0.5154,
+    "familiesImproved": 7,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "ACC",
+      "syn": "ACC_syn",
+      "deltaMeanAE": -0.0241
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 18,
+      "nBatches": 25,
+      "nBatchesTotal": 1000
+    }
+  },
+  {
+    "id": "covertype",
+    "name": "Covertype",
+    "source": "ours",
+    "nClasses": 7,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "MS2",
+    "bestMeanAE": 0.079,
+    "synWinRate": 0.1765,
+    "familiesImproved": 1,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "X",
+      "syn": "X_syn",
+      "deltaMeanAE": -0.0063
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 7,
+      "nBatches": 25,
+      "nBatchesTotal": 1000
+    }
+  },
+  {
+    "id": "dermatology",
+    "name": "Dermatology",
+    "source": "ours",
+    "nClasses": 6,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "CC2",
+    "bestMeanAE": 0.007,
+    "synWinRate": 0.0886,
+    "familiesImproved": 0,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": 0.0049
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 6,
+      "nBatches": 25,
+      "nBatchesTotal": 1000
+    }
+  },
+  {
+    "id": "har",
+    "name": "HAR",
+    "source": "ours",
+    "nClasses": 6,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "CC2",
+    "bestMeanAE": 0.0071,
+    "synWinRate": 0.1176,
+    "familiesImproved": 0,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": 0.0044
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 6,
+      "nBatches": 25,
+      "nBatchesTotal": 1000
+    }
+  },
+  {
+    "id": "land_use",
+    "name": "Land Use",
+    "source": "ours",
+    "nClasses": 8,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "DyS_cdt",
+    "bestMeanAE": 0.032,
+    "synWinRate": 0.1649,
+    "familiesImproved": 0,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "PACC",
+      "syn": "PACC_syn",
+      "deltaMeanAE": 0.0048
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 8,
+      "nBatches": 25,
+      "nBatchesTotal": 1000
+    }
+  },
+  {
+    "id": "mfeat",
+    "name": "Mfeat",
+    "source": "ours",
+    "nClasses": 10,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "CC2",
+    "bestMeanAE": 0.0335,
+    "synWinRate": 0.2272,
+    "familiesImproved": 1,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "PACC",
+      "syn": "PACC_syn",
+      "deltaMeanAE": -0.0159
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 10,
+      "nBatches": 25,
+      "nBatchesTotal": 1000
+    }
+  },
+  {
+    "id": "mfeat_icdm21",
+    "name": "Mfeat (ICDM'21)",
+    "source": "ours",
+    "nClasses": 3,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "ACC_cdt",
+    "bestMeanAE": 0.0912,
+    "synWinRate": 0.3557,
+    "familiesImproved": 3,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "MS2",
+      "syn": "MS2_syn",
+      "deltaMeanAE": -0.0157
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 3,
+      "nBatches": 25,
+      "nBatchesTotal": 1000
+    }
+  },
+  {
+    "id": "mosquitoes",
+    "name": "Mosquitoes",
+    "source": "ours",
+    "nClasses": 6,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "CC2",
+    "bestMeanAE": 0.0159,
+    "synWinRate": 0.121,
+    "familiesImproved": 1,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "HDy",
+      "syn": "HDy_syn",
+      "deltaMeanAE": -0.0064
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 6,
+      "nBatches": 25,
+      "nBatchesTotal": 1000
+    }
+  },
+  {
+    "id": "nursery",
+    "name": "Nursery",
+    "source": "ours",
+    "nClasses": 4,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "CC2",
+    "bestMeanAE": 0.0855,
+    "synWinRate": 0.1675,
+    "familiesImproved": 0,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "ACC",
+      "syn": "ACC_syn",
+      "deltaMeanAE": 0.0248
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 4,
+      "nBatches": 25,
+      "nBatchesTotal": 1000
+    }
+  },
+  {
+    "id": "phishingurl",
+    "name": "Phishing URL",
+    "source": "ours",
+    "nClasses": 5,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "DyS_cdt",
+    "bestMeanAE": 0.0196,
+    "synWinRate": 0.1382,
+    "familiesImproved": 0,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "HDy",
+      "syn": "HDy_syn",
+      "deltaMeanAE": 0.0027
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 5,
+      "nBatches": 25,
+      "nBatchesTotal": 1000
+    }
+  },
+  {
+    "id": "satimage",
+    "name": "Satimage",
+    "source": "ours",
+    "nClasses": 6,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "CC2",
+    "bestMeanAE": 0.0419,
+    "synWinRate": 0.2093,
+    "familiesImproved": 0,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "PACC",
+      "syn": "PACC_syn",
+      "deltaMeanAE": 0.001
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 6,
+      "nBatches": 25,
+      "nBatchesTotal": 1000
+    }
+  },
+  {
+    "id": "walking",
+    "name": "Walking",
+    "source": "ours",
+    "nClasses": 22,
+    "nMethods": 42,
+    "nBatches": 1000,
+    "bestMethod": "PCC",
+    "bestMeanAE": 0.0362,
+    "synWinRate": 0.41,
+    "familiesImproved": 3,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "PACC",
+      "syn": "PACC_syn",
+      "deltaMeanAE": -0.0096
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 22,
+      "nBatches": 25,
+      "nBatchesTotal": 1000
+    }
+  }
+]

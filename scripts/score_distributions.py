@@ -10,7 +10,9 @@ the drift detectors work on:
   <dataset>/test_scores/batch_<id>_multiclass.csv   incoming_test_scores: n x k
   <dataset>/test_scores/batch_<id>_<class>.csv      incoming_test_scores (1-D) plus
                                                     selected_p_scores / selected_n_scores,
-                                                    the synthetic scores QuaDapt picked
+                                                    the synthetic scores QuaDapt picked, and
+                                                    (newer runs) incoming_test_labels, the
+                                                    true 0/1 label of every incoming score
 
 This module turns them into kernel-density curves on a fixed grid over [0, 1]
 (Silverman bandwidth, reflected at both edges — the same estimator as the
@@ -40,6 +42,7 @@ SCORE_BATCH_LIMIT = 25
 SCORE_GRID = np.linspace(0.0, 1.0, 81)
 SCORE_SCALE = 100
 _MIN_BANDWIDTH = 0.02
+MIN_SCALE_SAMPLES = 10  # labeled test curves on fewer scores don't set the y-scale
 
 
 def _natural_key(value: str):
@@ -141,8 +144,8 @@ def _batch(dataset_dir: str, batch_id: str, labels: list[str]) -> tuple[dict, di
         sel_p = _parse(row.get("selected_p_scores", ""))
         sel_n = _parse(row.get("selected_n_scores", ""))
         curves = [bounded_kde(inc), bounded_kde(sel_p), bounded_kde(sel_n)]
-        y_max[label] = max(float(c.max()) for c in curves)
-        ovr[label] = {
+        scaled = list(curves)  # the curves allowed to set the shared y-scale
+        entry = {
             "n": int(inc.size),
             "nSelP": int(sel_p.size),
             "nSelN": int(sel_n.size),
@@ -150,6 +153,21 @@ def _batch(dataset_dir: str, batch_id: str, labels: list[str]) -> tuple[dict, di
             "selP": _pack(curves[1]),
             "selN": _pack(curves[2]),
         }
+        # Newer runs also store each incoming score's true 0/1 label: split the
+        # batch into its real positives / negatives (absent on older runs).
+        labels_cell = row.get("incoming_test_labels", "")
+        if labels_cell:
+            truth = _parse(labels_cell).astype(int)
+            if truth.shape == inc.shape:
+                pos, neg = inc[truth == 1], inc[truth == 0]
+                pos_c, neg_c = bounded_kde(pos), bounded_kde(neg)
+                # A handful of true positives gives a needle-thin KDE (peak ~20 at
+                # the bandwidth floor) that would flatten every other curve: such
+                # curves don't set the scale and clip at the top instead.
+                scaled += [c for c, s in ((pos_c, pos), (neg_c, neg)) if s.size >= MIN_SCALE_SAMPLES]
+                entry.update({"nPos": int(pos.size), "nNeg": int(neg.size), "incPos": _pack(pos_c), "incNeg": _pack(neg_c)})
+        y_max[label] = max(float(c.max()) for c in scaled)
+        ovr[label] = entry
 
     return {"id": batch_id, "multiclass": {"n": int(matrix.shape[0]), "curves": [_pack(c) for c in mc_curves]}, "ovr": ovr}, y_max
 

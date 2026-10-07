@@ -1,7 +1,7 @@
 import {
   ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, Cell, ResponsiveContainer,
 } from 'recharts'
-import { MINT, GREY } from '../../lib/resultsDerive'
+import { usePalette } from './PaletteContext'
 import { fmtAE, fmtPct } from '../../lib/resultsFormat'
 
 function PairTooltip({ active, payload, family }) {
@@ -19,6 +19,7 @@ function PairTooltip({ active, payload, family }) {
 // AE(base) vs. AE(syn) per test sample, paired by batch. Points below the
 // diagonal are samples where the _syn variant won.
 export default function PairedScatterChart({ family }) {
+  const { syn: SYN, classic: BASE } = usePalette()
   const data = family.aeBase.map((base, i) => ({
     batch: i,
     base,
@@ -31,7 +32,7 @@ export default function PairedScatterChart({ family }) {
     <div>
       <div style={{ fontSize: 11, color: 'var(--t4)', marginBottom: 6 }}>
         Paired samples · <span style={{ color: 'var(--t2)', fontWeight: 700 }}>{family.base}</span>
-        {' '}vs {family.syn} · each point = one test sample · below the line, <span className="mono" style={{ color: 'var(--mint)' }}>_syn</span> wins
+        {' '}vs {family.syn} · each point = one test sample · below the line, <span className="mono" style={{ color: SYN }}>_syn</span> wins
       </div>
       <ResponsiveContainer width="100%" height={280}>
         <ScatterChart margin={{ top: 10, right: 20, bottom: 24, left: 4 }}>
@@ -58,14 +59,14 @@ export default function PairedScatterChart({ family }) {
           <Tooltip content={<PairTooltip family={family} />} cursor={{ strokeDasharray: '3 3', stroke: 'rgba(255,255,255,.2)' }} />
           <Scatter data={data} isAnimationActive animationDuration={550} animationEasing="ease-out">
             {data.map((d, i) => (
-              <Cell key={i} fill={d.win ? MINT : GREY} fillOpacity={0.55} r={3} />
+              <Cell key={i} fill={d.win ? SYN : BASE} fillOpacity={0.55} r={3} />
             ))}
           </Scatter>
         </ScatterChart>
       </ResponsiveContainer>
       <div className="fam-legend">
-        <span className="li"><span className="sw" style={{ background: MINT }} />_syn better ({fmtPct(family.winRate)})</span>
-        <span className="li"><span className="sw" style={{ background: GREY }} />base better</span>
+        <span className="li"><span className="sw" style={{ background: SYN }} />_syn better ({fmtPct(family.winRate)})</span>
+        <span className="li"><span className="sw" style={{ background: BASE }} />base better</span>
       </div>
     </div>
   )

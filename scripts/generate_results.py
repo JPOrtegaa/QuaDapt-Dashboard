@@ -24,6 +24,11 @@ in every run, computes:
     detector plus the first few test batches with QuaDapt's selected synthetic
     scores, under scores/<id>/, flagged as `scores` on the manifest entry
 
+  * detector-gated runs only ("detectors" on the EXPERIMENTS entry): per-batch
+    AE box stats per base method x classic/cdt/ibdd/syn variant (all classes
+    and per class), and the drift detectors' calibration distances, test
+    statistics and per-batch flags (see scripts/drift_detectors.py)
+
 Output, per experiment: one JSON per dataset under
 results/generated/<experiment>/<id>.json, plus that experiment's manifest.json
 and general.json. A results/generated/experiments.json indexes the runs and
@@ -46,6 +51,7 @@ import sys
 import numpy as np
 import pandas as pd
 
+from drift_detectors import build_detectors
 from score_distributions import write_score_distributions
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -60,7 +66,19 @@ OUT_DIR = os.path.join(ROOT, "results", "generated")
 #                       resolved per dataset id through DATASET_SOURCE
 #   topline synthesize <base>_topline methods (per class, the better of base
 #          and its syn variant); absent/False leaves the run as-is
+#   detectors drift detectors that gate QuaDapt in this run (<base>_<detector>
+#          quantifiers): adds the `variantBoxes` and `detectors` blocks per
+#          dataset, and switches the UI to the classic/cdt/ibdd/syn palette
 EXPERIMENTS = [
+    {
+        "id": "ours_cdt_ibdd",
+        "name": "Ours · CDT/IBDD gated",
+        "dir": "ovr_results_cdt_ibdd_ours",
+        "layout": "flat",
+        "desc": "Ours datasets, batch size 100 — QuaDapt gated by the CDT / IBDD drift detectors",
+        "detectors": ["cdt", "ibdd"],
+        "topline": True,
+    },
     {
         "id": "ovr_corrected",
         "name": "OvR corrected",
@@ -253,6 +271,81 @@ def syn_base(name: str) -> str | None:
     return None
 
 
+# Detector-gated QuaDapt variants: <base>_<detector> (drift -> syn, else base).
+DETECTOR_SUFFIXES = ("cdt", "ibdd")
+VARIANT_ORDER = ["classic", "cdt", "ibdd", "syn"]
+
+# Native multiclass quantifiers have no OvR variants; the method x family box
+# plot leaves them out (mirrors the experiment repo's ours_distribution_analysis).
+MULTICLASS_QUANTIFIERS = {"GAC", "GPAC", "EMQ", "KDEyHD", "KDEyCS", "KDEyML", "FM", "HDx", "PWK", "CC2"}
+BOX_OUTLIER_CAP = 30
+
+
+def method_variant(name: str) -> str:
+    """classic / cdt / ibdd / syn / topline — mirrored by methodVariant() in
+    src/lib/resultsDerive.js."""
+    if name.endswith("_topline"):
+        return "topline"
+    for det in DETECTOR_SUFFIXES:
+        if name.endswith(f"_{det}"):
+            return det
+    if syn_base(name) is not None:
+        return "syn"
+    return "classic"
+
+
+def variant_base(name: str) -> str:
+    """ACC_cdt -> ACC, DySyn -> DyS, ACC -> ACC."""
+    variant = method_variant(name)
+    if variant == "syn":
+        return syn_base(name)
+    if variant in DETECTOR_SUFFIXES:
+        return name[: -len(variant) - 1]
+    return name
+
+
+def box_stats(values: np.ndarray) -> list:
+    """[lo, q1, median, q3, hi, mean, nOut, outliers] — Tukey whiskers (furthest
+    point within 1.5 IQR), outliers evenly subsampled to BOX_OUTLIER_CAP."""
+    v = np.sort(values[np.isfinite(values)])
+    q1, med, q3 = np.quantile(v, [0.25, 0.5, 0.75])
+    iqr = q3 - q1
+    inside = v[(v >= q1 - 1.5 * iqr) & (v <= q3 + 1.5 * iqr)]
+    out = v[(v < q1 - 1.5 * iqr) | (v > q3 + 1.5 * iqr)]
+    if out.size > BOX_OUTLIER_CAP:
+        out = out[np.linspace(0, out.size - 1, BOX_OUTLIER_CAP).round().astype(int)]
+    return [
+        clean(inside.min()), clean(q1), clean(med), clean(q3), clean(inside.max()),
+        clean(v.mean()), int(((v < q1 - 1.5 * iqr) | (v > q3 + 1.5 * iqr)).sum()),
+        [clean(x, 3) for x in out],
+    ]
+
+
+def variant_boxes(df: pd.DataFrame, methods: list, classes: list) -> dict:
+    """Per-batch AE box stats for every base method's classic/cdt/ibdd/syn
+    members, over all classes (mean AE per batch) and per OvR class."""
+    members = {}
+    for m in methods:
+        base = variant_base(m)
+        if base in MULTICLASS_QUANTIFIERS:
+            continue
+        members.setdefault(base, {})[method_variant(m)] = m
+    bases = sorted(members)
+    present = [v for v in VARIANT_ORDER if any(v in members[b] for b in bases)]
+    box_methods = [members[b][v] for b in bases for v in present if v in members[b]]
+
+    rows = df[df["qnt"].isin(box_methods)]
+    by_method = {m: g for m, g in rows.groupby("qnt")}
+    scopes = {"all": {m: box_stats(by_method[m]["ae"].to_numpy()) for m in box_methods}}
+    for cls in classes:
+        pcol, rcol = f"c{cls}_p_normalized", f"c{cls}_real"
+        scopes[cls] = {
+            m: box_stats((by_method[m][pcol] - by_method[m][rcol]).abs().to_numpy())
+            for m in box_methods
+        }
+    return {"variants": present, "bases": bases, "members": members, "scopes": scopes}
+
+
 def synthesize_topline(df: pd.DataFrame, families_map: dict, classes: list):
     """Append one `<base>_topline` method per family to `df`.
 
@@ -334,7 +427,9 @@ def clean(x, ndigits=4):
     return round(xf, ndigits)
 
 
-def compute_dataset(group: str | None, csv_path: str, topline: bool = False) -> dict | None:
+def compute_dataset(
+    group: str | None, csv_path: str, topline: bool = False, detectors: list | None = None,
+) -> dict | None:
     fname = os.path.basename(csv_path)
     prefix = fname[: -len("_results.csv")]
     id_ = slugify(prefix)
@@ -422,6 +517,7 @@ def compute_dataset(group: str | None, csv_path: str, topline: bool = False) -> 
             "name": m,
             "family": family,
             "isSyn": is_syn,
+            "variant": method_variant(m),
             "meanAE": mean_v,
             "q1": clean(q1s[m]),
             "q3": clean(q3s[m]),
@@ -467,6 +563,13 @@ def compute_dataset(group: str | None, csv_path: str, topline: bool = False) -> 
     }
     if topline:
         dataset["nTopline"] = len(topline_picks)
+    if detectors:
+        # Detector-gated runs: method x family boxes (real methods only) and
+        # the detectors' calibration / per-batch flags.
+        dataset["variantBoxes"] = variant_boxes(df, methods, classes)
+        det_block = build_detectors(os.path.dirname(csv_path), detectors, classes)
+        if det_block:
+            dataset["detectors"] = det_block
 
     syn_win_rates = [f["winRate"] for f in families if f["winRate"] is not None]
     families_improved = sum(1 for f in families if f["deltaMeanAE"] < 0)
@@ -714,6 +817,7 @@ def build_general(records, datasets_meta):
         entry = {
             "name": name,
             "isSyn": syn_base(name) is not None,
+            "variant": method_variant(name),
             "meanRank": clean(float(np.mean(ranks)), 2),
             "coverage": len(ranks),
         }
@@ -777,7 +881,9 @@ def build_experiment(exp: dict, datasets_meta: dict) -> dict | None:
     for group, csv_path in sorted(find_result_csvs(raw_dir, exp["layout"])):
         rel = os.path.relpath(csv_path, raw_dir)
         print(f"  {rel} ...", flush=True)
-        result = compute_dataset(group, csv_path, topline=exp.get("topline", False))
+        result = compute_dataset(
+            group, csv_path, topline=exp.get("topline", False), detectors=exp.get("detectors"),
+        )
         if result is None:
             continue
         dataset, manifest_entry, general_record = result
@@ -803,12 +909,16 @@ def build_experiment(exp: dict, datasets_meta: dict) -> dict | None:
     print(f"  wrote {len(manifest)} datasets to {out_dir}")
     print(f"  general.json: {len(manifest)} datasets, {joined} joined to datasets.json metadata")
 
-    return {
-        "id": exp["id"],
-        "name": exp["name"],
-        "desc": exp["desc"],
-        "nDatasets": len(manifest),
-    }
+    return index_entry(exp, len(manifest))
+
+
+def index_entry(exp: dict, n_datasets: int) -> dict:
+    """One experiments.json row; `detectors` only on detector-gated runs (the
+    UI switches to the classic/cdt/ibdd/syn palette on it)."""
+    entry = {"id": exp["id"], "name": exp["name"], "desc": exp["desc"], "nDatasets": n_datasets}
+    if exp.get("detectors"):
+        entry["detectors"] = exp["detectors"]
+    return entry
 
 
 def main():
@@ -836,7 +946,7 @@ def main():
         if os.path.exists(manifest_path):
             with open(manifest_path, encoding="utf-8") as f:
                 n = len(json.load(f))
-            index.append({"id": exp["id"], "name": exp["name"], "desc": exp["desc"], "nDatasets": n})
+            index.append(index_entry(exp, n))
 
     with open(os.path.join(OUT_DIR, "experiments.json"), "w", encoding="utf-8") as f:
         json.dump(index, f, indent=2)

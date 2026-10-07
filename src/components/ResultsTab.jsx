@@ -9,6 +9,10 @@ import ScoreDistributionsCard from './results/scores/ScoreDistributionsCard'
 import GeneralView from './results/general/GeneralView'
 import ExperimentSelector from './results/ExperimentSelector'
 import ToplineToggle from './results/ToplineToggle'
+import VariantBoxCard from './results/variants/VariantBoxCard'
+import DriftDetectorCard from './results/detectors/DriftDetectorCard'
+import { PaletteProvider } from './results/PaletteContext'
+import { VARIANT_PALETTES } from '../lib/resultsDerive'
 import {
   useExperiments, useResultsManifest, useResultDataset, useGeneral,
   useDatasetAcrossRuns, useGeneralAcrossRuns,
@@ -75,13 +79,17 @@ export default function ResultsTab() {
   const selectorDatasets = [GENERAL_ENTRY, ...manifest]
   const manifestEntry = manifest.find((d) => d.id === activeId)
   const hasTopline = manifest.some((d) => d.nTopline > 0)
+  // Detector-gated runs switch every chart to the classic / cdt / ibdd / syn palette.
+  const activeExperiment = experiments.find((e) => e.id === activeExperimentId)
+  const familyPalette = Boolean(activeExperiment?.detectors?.length)
+  const palette = familyPalette ? VARIANT_PALETTES.family : VARIANT_PALETTES.default
   const toplineOn = hasTopline && showTopline
   const methodsMeta = manifestEntry
     ? `${manifestEntry.nMethods} methods${toplineOn && manifestEntry.nTopline ? ` (+${manifestEntry.nTopline} topline)` : ''}`
     : '— methods'
 
   return (
-    <>
+    <PaletteProvider value={palette}>
       <div className="head">
         <div className="head-l">
           <h1>Quantification results</h1>
@@ -108,6 +116,19 @@ export default function ResultsTab() {
             Aggregate view over all datasets: which dataset characteristics make QuaDapt&apos;s
             adaptation pay off. <span className="mint">Mint = _syn improves (Δ AE &lt; 0)</span>,
             amber = regresses. Δ AE is <span className="mono">syn − base</span> mean absolute error.
+          </>
+        ) : familyPalette ? (
+          <>
+            Absolute error per test sample, computed from the <span className="mono">*_p_normalized</span> columns
+            against true prevalence. Method families:{' '}
+            <span className="fam" style={{ color: palette.classic }}>classic</span>,{' '}
+            <span className="fam" style={{ color: palette.cdt }}>QuaDapt_cdt</span> and{' '}
+            <span className="fam" style={{ color: palette.ibdd }}>QuaDapt_ibdd</span> (drift-gated: synthetic scores
+            on drift, training scores otherwise),{' '}
+            <span className="fam" style={{ color: palette.syn }}>QuaDapt (_syn)</span>
+            {toplineOn && (
+              <>, <span className="sage">sage = _topline</span> (per class, the better of base / _syn — an oracle upper bound)</>
+            )}.
           </>
         ) : (
           <>
@@ -172,6 +193,10 @@ export default function ResultsTab() {
               compareStatus={datasetRuns.status}
             />
 
+            {dataset.variantBoxes && (
+              <VariantBoxCard boxes={dataset.variantBoxes} classes={dataset.classes} nBatches={dataset.nBatches} />
+            )}
+
             <FamilyCompareCard
               families={dataset.families}
               selectedFamily={activeFamily}
@@ -186,16 +211,21 @@ export default function ResultsTab() {
               onSelectMethod={setSelectedMethod}
             />
 
+            {dataset.detectors && (
+              <DriftDetectorCard detectors={dataset.detectors} classes={dataset.classes} tv={dataset.tv} />
+            )}
+
             {manifestEntry.scores && (
               <ScoreDistributionsCard
                 experimentId={activeExperimentId}
                 datasetId={activeId}
                 scores={manifestEntry.scores}
+                detectors={dataset.detectors ?? null}
               />
             )}
           </div>
         )
       })()}
-    </>
+    </PaletteProvider>
   )
 }
