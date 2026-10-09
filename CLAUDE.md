@@ -33,6 +33,9 @@ method (One-vs-Rest, n binary detectors). This repo is the **dashboard only**.
     `batch_<k>.json` per shipped test batch (KDE curves precomputed by
     `scripts/score_distributions.py`, capped at `SCORE_BATCH_LIMIT`); the manifest entry
     carries a `scores` block and the card only renders when it is present.
+    Runs with a `reshape_trace.csv` (gamma variants) also get each batch's gamma-picked
+    reference, rebuilt from the detector's training scores (`reshaped.gamma` per OvR model,
+    `scores.picks` in the manifest) — the card then shows a Syn / Gamma switch in test view.
   - Detector-gated runs (`"detectors": [...]` on the `EXPERIMENTS` entry, e.g. `ours_cdt_ibdd`,
     whose `<base>_cdt` / `<base>_ibdd` methods use `_syn` on drift and the base otherwise):
     each `<id>.json` also carries `variantBoxes` (method × classic/cdt/ibdd/syn AE box stats,
@@ -40,7 +43,8 @@ method (One-vs-Rest, n binary detectors). This repo is the **dashboard only**.
     thresholds, per-batch drift flags — `scripts/drift_detectors.py`). The `detectors` field
     is copied to `experiments.json`, and the UI then switches every chart to the
     classic/cdt/ibdd/syn palette (royalblue/seagreen/darkorange/crimson, via
-    `PaletteContext`).
+    `PaletteContext`). Runs with reshaped `<base>_gamma` methods (e.g. `ours_all_variants`) add
+    a fifth `gamma` variant (mediumpurple) to the boxes and the palette.
 - **Update model:** regenerate/drop in a new artifact → rebuild. Static output hosts
   anywhere (e.g. GitHub Pages).
 

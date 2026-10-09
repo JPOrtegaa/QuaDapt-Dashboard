@@ -37,10 +37,11 @@ export default function GlobalMethodRankCard({ general, showTopline = true }) {
   const excluded = pool.length - data.length
   const palette = usePalette()
   const hasTopline = data.some((m) => m.isTopline)
+  const hasGamma = data.some((m) => m.variant === 'gamma')
   const maxRank = Math.max(...data.map((m) => m.rank))
   const height = data.length * ROW_H + 24
   const legend = palette === VARIANT_PALETTES.family
-    ? `blue = classic, green = QuaDapt_cdt, orange = QuaDapt_ibdd, red = QuaDapt (_syn)${hasTopline ? ', sage = _topline oracle' : ''}`
+    ? `blue = classic, green = QuaDapt_cdt, orange = QuaDapt_ibdd, red = QuaDapt (_syn)${hasGamma ? ', purple = QuaDapt_gamma' : ''}${hasTopline ? ', sage = _topline oracle' : ''}`
     : `mint = our adapted (_syn)${hasTopline ? ', sage = _topline oracle' : ''}, grey = classic`
 
   return (

@@ -10,18 +10,19 @@ export const SAGE = '#c3e29a' // <base>_topline: per class, the better of base /
 
 // Method category -> color, per run. `default`: mint = our adapted (_syn)
 // methods, grey = classic, sage = _topline. `family` (runs that gate QuaDapt
-// with drift detectors): the classic / cdt / ibdd / syn palette of the
-// experiment repo's analysis notebooks (royalblue / seagreen / darkorange /
-// crimson), so the dashboard reads like those figures.
+// with drift detectors): the classic / cdt / ibdd / syn / gamma palette of
+// the experiment repo's analysis notebooks (royalblue / seagreen / darkorange
+// / crimson / mediumpurple), so the dashboard reads like those figures.
 export const VARIANT_PALETTES = {
-  default: { classic: GREY, cdt: GREY, ibdd: GREY, syn: MINT, topline: SAGE },
-  family: { classic: '#4169e1', cdt: '#2e8b57', ibdd: '#ff8c00', syn: '#dc143c', topline: SAGE },
+  default: { classic: GREY, cdt: GREY, ibdd: GREY, syn: MINT, gamma: GREY, topline: SAGE },
+  family: { classic: '#4169e1', cdt: '#2e8b57', ibdd: '#ff8c00', syn: '#dc143c', gamma: '#9370db', topline: SAGE },
 }
 export const VARIANT_LABELS = {
   classic: 'classic',
   cdt: 'QuaDapt_cdt',
   ibdd: 'QuaDapt_ibdd',
   syn: 'QuaDapt (_syn)',
+  gamma: 'QuaDapt_gamma',
   topline: '_topline',
 }
 
@@ -39,6 +40,7 @@ export function methodVariant(name) {
   if (isToplineName(name)) return 'topline'
   if (name.endsWith('_cdt')) return 'cdt'
   if (name.endsWith('_ibdd')) return 'ibdd'
+  if (name.endsWith('_gamma')) return 'gamma'
   if (isSynName(name)) return 'syn'
   return 'classic'
 }

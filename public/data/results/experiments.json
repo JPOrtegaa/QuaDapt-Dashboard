@@ -1,5 +1,23 @@
 [
   {
+    "id": "ours_all_variants",
+    "name": "Ours \u00b7 all variants",
+    "desc": "Ours datasets, batch size 100 \u2014 classic, CDT/IBDD-gated, synthetic and gamma-reshaped QuaDapt",
+    "nDatasets": 13,
+    "detectors": [
+      "cdt",
+      "ibdd"
+    ],
+    "variants": [
+      "classic",
+      "cdt",
+      "ibdd",
+      "syn",
+      "gamma",
+      "topline"
+    ]
+  },
+  {
     "id": "ours_cdt_ibdd",
     "name": "Ours \u00b7 CDT/IBDD gated",
     "desc": "Ours datasets, batch size 100 \u2014 QuaDapt gated by the CDT / IBDD drift detectors",

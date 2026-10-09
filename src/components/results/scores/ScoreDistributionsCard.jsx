@@ -5,6 +5,7 @@ import { CurvesIcon } from '../../Icons'
 import ScoreSourceToggle from './ScoreSourceToggle'
 import DetectorPills from './DetectorPills'
 import BatchScrubber from './BatchScrubber'
+import PickSourceToggle from './PickSourceToggle'
 import DetectorVerdict from './DetectorVerdict'
 import DensityLegend from './DensityLegend'
 import DensityChart from './DensityChart'
@@ -20,10 +21,13 @@ const SUBTITLE = 'what each detector sees · kernel density of classifier scores
 // that dumped raw scores (`manifest.scores`). In detector-gated runs
 // (`detectors`, from the dataset JSON) the test view also says, per batch,
 // whether each detector sent its gated methods to these synthetic scores.
+// Runs with reshaped variants (`scores.picks`) can swap the dashed synthetic
+// pick for the gamma-reshaped one.
 export default function ScoreDistributionsCard({ experimentId, datasetId, scores, detectors = null }) {
   const [view, setView] = useState('training')
   const [model, setModel] = useState(null)
   const [batchIndex, setBatchIndex] = useState(0)
+  const [pick, setPick] = useState('syn')
 
   const { status: tStatus, data: training, error: tError } = useScoreTraining(experimentId, datasetId)
   const isTest = view === 'test'
@@ -46,7 +50,8 @@ export default function ScoreDistributionsCard({ experimentId, datasetId, scores
     )
   }
 
-  const state = scoreState({ training, view, model: activeModel, batch: isTest ? batch : null })
+  const activePick = scores.picks?.includes(pick) ? pick : 'syn'
+  const state = scoreState({ training, view, model: activeModel, batch: isTest ? batch : null, pick: activePick })
   const caption = isTest && bStatus === 'error' ? `Failed to load batch ${batchIndex} — ${bError}` : state.caption
 
   return (
@@ -64,6 +69,10 @@ export default function ScoreDistributionsCard({ experimentId, datasetId, scores
               batchId={batch?.id ?? training.batchIds[batchIndex]}
               onChange={setBatchIndex}
             />
+          )}
+
+          {isTest && activeModel !== MULTICLASS && (
+            <PickSourceToggle picks={scores.picks} value={activePick} onChange={setPick} />
           )}
 
           {isTest && detectors && activeModel !== MULTICLASS && (

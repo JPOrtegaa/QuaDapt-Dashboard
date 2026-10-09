@@ -79,9 +79,10 @@ export default function ResultsTab() {
   const selectorDatasets = [GENERAL_ENTRY, ...manifest]
   const manifestEntry = manifest.find((d) => d.id === activeId)
   const hasTopline = manifest.some((d) => d.nTopline > 0)
-  // Detector-gated runs switch every chart to the classic / cdt / ibdd / syn palette.
+  // Detector-gated runs switch every chart to the classic / cdt / ibdd / syn / gamma palette.
   const activeExperiment = experiments.find((e) => e.id === activeExperimentId)
   const familyPalette = Boolean(activeExperiment?.detectors?.length)
+  const hasGamma = Boolean(activeExperiment?.variants?.includes('gamma'))
   const palette = familyPalette ? VARIANT_PALETTES.family : VARIANT_PALETTES.default
   const toplineOn = hasTopline && showTopline
   const methodsMeta = manifestEntry
@@ -126,6 +127,13 @@ export default function ResultsTab() {
             <span className="fam" style={{ color: palette.ibdd }}>QuaDapt_ibdd</span> (drift-gated: synthetic scores
             on drift, training scores otherwise),{' '}
             <span className="fam" style={{ color: palette.syn }}>QuaDapt (_syn)</span>
+            {hasGamma && (
+              <>
+                ,{' '}
+                <span className="fam" style={{ color: palette.gamma }}>QuaDapt_gamma</span> (training scores
+                reshaped by a per-batch gamma)
+              </>
+            )}
             {toplineOn && (
               <>, <span className="sage">sage = _topline</span> (per class, the better of base / _syn — an oracle upper bound)</>
             )}.

@@ -1,0 +1,366 @@
+[
+  {
+    "id": "avila",
+    "name": "Avila",
+    "source": "ours",
+    "nClasses": 12,
+    "nMethods": 52,
+    "nBatches": 1000,
+    "bestMethod": "PACC_cdt",
+    "bestMeanAE": 0.0619,
+    "synWinRate": 0.1858,
+    "familiesImproved": 2,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "PACC",
+      "syn": "PACC_syn",
+      "deltaMeanAE": -0.0077
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 12,
+      "nBatches": 25,
+      "nBatchesTotal": 1000,
+      "picks": [
+        "syn",
+        "gamma"
+      ]
+    }
+  },
+  {
+    "id": "chessgame",
+    "name": "Chess (King-Rook vs King)",
+    "source": "ours",
+    "nClasses": 18,
+    "nMethods": 52,
+    "nBatches": 1000,
+    "bestMethod": "ACC_gamma",
+    "bestMeanAE": 0.0474,
+    "synWinRate": 0.4423,
+    "familiesImproved": 5,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "MS",
+      "syn": "MS_syn",
+      "deltaMeanAE": -0.0396
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 18,
+      "nBatches": 25,
+      "nBatchesTotal": 1000,
+      "picks": [
+        "syn",
+        "gamma"
+      ]
+    }
+  },
+  {
+    "id": "covertype",
+    "name": "Covertype",
+    "source": "ours",
+    "nClasses": 7,
+    "nMethods": 52,
+    "nBatches": 1000,
+    "bestMethod": "MS2",
+    "bestMeanAE": 0.079,
+    "synWinRate": 0.0969,
+    "familiesImproved": 0,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "PACC",
+      "syn": "PACC_syn",
+      "deltaMeanAE": 0.0323
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 7,
+      "nBatches": 25,
+      "nBatchesTotal": 1000,
+      "picks": [
+        "syn",
+        "gamma"
+      ]
+    }
+  },
+  {
+    "id": "dermatology",
+    "name": "Dermatology",
+    "source": "ours",
+    "nClasses": 6,
+    "nMethods": 52,
+    "nBatches": 1000,
+    "bestMethod": "CC2",
+    "bestMeanAE": 0.007,
+    "synWinRate": 0.0677,
+    "familiesImproved": 0,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "HDy",
+      "syn": "HDy_syn",
+      "deltaMeanAE": 0.01
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 6,
+      "nBatches": 25,
+      "nBatchesTotal": 1000,
+      "picks": [
+        "syn",
+        "gamma"
+      ]
+    }
+  },
+  {
+    "id": "har",
+    "name": "HAR",
+    "source": "ours",
+    "nClasses": 6,
+    "nMethods": 52,
+    "nBatches": 1000,
+    "bestMethod": "CC2",
+    "bestMeanAE": 0.0071,
+    "synWinRate": 0.0903,
+    "familiesImproved": 0,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "T50",
+      "syn": "T50_syn",
+      "deltaMeanAE": 0.0083
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 6,
+      "nBatches": 25,
+      "nBatchesTotal": 1000,
+      "picks": [
+        "syn",
+        "gamma"
+      ]
+    }
+  },
+  {
+    "id": "land_use",
+    "name": "Land Use",
+    "source": "ours",
+    "nClasses": 8,
+    "nMethods": 52,
+    "nBatches": 1000,
+    "bestMethod": "DyS_cdt",
+    "bestMeanAE": 0.032,
+    "synWinRate": 0.1054,
+    "familiesImproved": 0,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "HDy",
+      "syn": "HDy_syn",
+      "deltaMeanAE": 0.0153
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 8,
+      "nBatches": 25,
+      "nBatchesTotal": 1000,
+      "picks": [
+        "syn",
+        "gamma"
+      ]
+    }
+  },
+  {
+    "id": "mfeat",
+    "name": "Mfeat",
+    "source": "ours",
+    "nClasses": 10,
+    "nMethods": 52,
+    "nBatches": 1000,
+    "bestMethod": "CC2",
+    "bestMeanAE": 0.0335,
+    "synWinRate": 0.155,
+    "familiesImproved": 1,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "PACC",
+      "syn": "PACC_syn",
+      "deltaMeanAE": -0.0047
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 10,
+      "nBatches": 25,
+      "nBatchesTotal": 1000,
+      "picks": [
+        "syn",
+        "gamma"
+      ]
+    }
+  },
+  {
+    "id": "mfeat_icdm21",
+    "name": "Mfeat (ICDM'21)",
+    "source": "ours",
+    "nClasses": 3,
+    "nMethods": 52,
+    "nBatches": 1000,
+    "bestMethod": "ACC_cdt",
+    "bestMeanAE": 0.0932,
+    "synWinRate": 0.2865,
+    "familiesImproved": 0,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "X",
+      "syn": "X_syn",
+      "deltaMeanAE": 0.0339
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 3,
+      "nBatches": 25,
+      "nBatchesTotal": 1000,
+      "picks": [
+        "syn",
+        "gamma"
+      ]
+    }
+  },
+  {
+    "id": "mosquitoes",
+    "name": "Mosquitoes",
+    "source": "ours",
+    "nClasses": 6,
+    "nMethods": 52,
+    "nBatches": 1000,
+    "bestMethod": "CC2",
+    "bestMeanAE": 0.0159,
+    "synWinRate": 0.129,
+    "familiesImproved": 1,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "HDy",
+      "syn": "HDy_syn",
+      "deltaMeanAE": -0.0063
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 6,
+      "nBatches": 25,
+      "nBatchesTotal": 1000,
+      "picks": [
+        "syn",
+        "gamma"
+      ]
+    }
+  },
+  {
+    "id": "nursery",
+    "name": "Nursery",
+    "source": "ours",
+    "nClasses": 4,
+    "nMethods": 52,
+    "nBatches": 1000,
+    "bestMethod": "CC2",
+    "bestMeanAE": 0.0855,
+    "synWinRate": 0.12,
+    "familiesImproved": 0,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "PACC",
+      "syn": "PACC_syn",
+      "deltaMeanAE": 0.0541
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 4,
+      "nBatches": 25,
+      "nBatchesTotal": 1000,
+      "picks": [
+        "syn",
+        "gamma"
+      ]
+    }
+  },
+  {
+    "id": "phishingurl",
+    "name": "Phishing URL",
+    "source": "ours",
+    "nClasses": 5,
+    "nMethods": 52,
+    "nBatches": 1000,
+    "bestMethod": "DyS_cdt",
+    "bestMeanAE": 0.0195,
+    "synWinRate": 0.1068,
+    "familiesImproved": 0,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "HDy",
+      "syn": "HDy_syn",
+      "deltaMeanAE": 0.0028
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 5,
+      "nBatches": 25,
+      "nBatchesTotal": 1000,
+      "picks": [
+        "syn",
+        "gamma"
+      ]
+    }
+  },
+  {
+    "id": "satimage",
+    "name": "Satimage",
+    "source": "ours",
+    "nClasses": 6,
+    "nMethods": 52,
+    "nBatches": 1000,
+    "bestMethod": "CC2",
+    "bestMeanAE": 0.0419,
+    "synWinRate": 0.1817,
+    "familiesImproved": 0,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "MAX",
+      "syn": "MAX_syn",
+      "deltaMeanAE": 0.027
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 6,
+      "nBatches": 25,
+      "nBatchesTotal": 1000,
+      "picks": [
+        "syn",
+        "gamma"
+      ]
+    }
+  },
+  {
+    "id": "walking",
+    "name": "Walking",
+    "source": "ours",
+    "nClasses": 22,
+    "nMethods": 52,
+    "nBatches": 1000,
+    "bestMethod": "PCC",
+    "bestMeanAE": 0.0362,
+    "synWinRate": 0.2349,
+    "familiesImproved": 1,
+    "nFamilies": 10,
+    "biggestGain": {
+      "base": "PACC",
+      "syn": "PACC_syn",
+      "deltaMeanAE": -0.0095
+    },
+    "nTopline": 10,
+    "scores": {
+      "nClasses": 22,
+      "nBatches": 25,
+      "nBatchesTotal": 1000,
+      "picks": [
+        "syn",
+        "gamma"
+      ]
+    }
+  }
+]

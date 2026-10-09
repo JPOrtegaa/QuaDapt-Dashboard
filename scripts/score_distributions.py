@@ -14,6 +14,13 @@ the drift detectors work on:
                                                     (newer runs) incoming_test_labels, the
                                                     true 0/1 label of every incoming score
 
+Runs with reshaped QuaDapt variants (<base>_gamma) also write
+<dataset>/reshape_trace.csv: per batch and detector, the gamma the search
+picked. Its picked reference is not dumped, but it is deterministic — the
+detector's own training scores under reshape_scores(pos, neg, gamma, gamma)
+(methods/quantifiers_utils.py in the experiment repo) — so it is rebuilt here
+and shipped next to the synthetic pick as `reshaped.<variant>`.
+
 This module turns them into kernel-density curves on a fixed grid over [0, 1]
 (Silverman bandwidth, reflected at both edges — the same estimator as the
 experiment repo's distribution_analysis notebook) so the browser only draws:
@@ -105,9 +112,34 @@ def _batch_ids(dataset_dir: str) -> list[str]:
     return ids
 
 
-def _training(dataset_dir: str, labels: list[str]) -> tuple[dict, dict]:
+RESHAPE_EPS = 1e-3
+
+
+def reshape_scores(pos: np.ndarray, neg: np.ndarray, gamma: float, eps: float = RESHAPE_EPS):
+    """Shared-gamma power reshape of a detector's training scores — a copy of
+    reshape_scores() in the experiment repo's methods/quantifiers_utils.py:
+    positives -> pos ** gamma, negatives mirrored -> 1 - (1 - neg) ** gamma."""
+    pos = np.clip(pos, eps, 1 - eps)
+    neg = np.clip(neg, eps, 1 - eps)
+    return pos**gamma, 1 - (1 - neg) ** gamma
+
+
+def _reshape_trace(dataset_dir: str) -> dict:
+    """{variant: {(batch_index, model_id): gamma}} from reshape_trace.csv, or {}."""
+    path = os.path.join(dataset_dir, "reshape_trace.csv")
+    if not os.path.isfile(path):
+        return {}
+    picks = {}
+    with open(path, newline="", encoding="utf-8") as handle:
+        for row in csv.DictReader(handle):
+            picks.setdefault(row["variant"], {})[(int(row["batch_index"]), row["model_id"])] = float(row["param"])
+    return picks
+
+
+def _training(dataset_dir: str, labels: list[str]) -> tuple[dict, dict, dict]:
     """Every model's training curves plus each model's peak density (the card
-    keeps one y-scale per detector so a 5-positive class can't squash the rest)."""
+    keeps one y-scale per detector so a 5-positive class can't squash the rest),
+    and the raw (pos, neg) training scores per detector for the reshaped picks."""
     y_max = {}
     mc_row = _read_row(os.path.join(dataset_dir, "multiclass", "training_distributions.csv"))
     matrix = _parse(mc_row["training_scores"])
@@ -116,20 +148,27 @@ def _training(dataset_dir: str, labels: list[str]) -> tuple[dict, dict]:
     mc_curves = [bounded_kde(matrix[:, i]) for i in range(len(labels))]
     y_max["multiclass"] = max(float(c.max()) for c in mc_curves)
 
-    ovr = {}
+    ovr, raw = {}, {}
     for label in labels:
         row = _read_row(os.path.join(dataset_dir, label, "training_distributions.csv"))
         pos, neg = _parse(row["pos_scores"]), _parse(row["neg_scores"])
+        raw[label] = (pos, neg)
         pos_c, neg_c = bounded_kde(pos), bounded_kde(neg)
         y_max[label] = max(float(pos_c.max()), float(neg_c.max()))
         ovr[label] = {"nPos": int(pos.size), "nNeg": int(neg.size), "pos": _pack(pos_c), "neg": _pack(neg_c)}
 
-    return {"multiclass": {"n": int(matrix.shape[0]), "curves": [_pack(c) for c in mc_curves]}, "ovr": ovr}, y_max
+    return {"multiclass": {"n": int(matrix.shape[0]), "curves": [_pack(c) for c in mc_curves]}, "ovr": ovr}, y_max, raw
 
 
-def _batch(dataset_dir: str, batch_id: str, labels: list[str]) -> tuple[dict, dict]:
+def _batch(
+    dataset_dir: str, batch_id: str, labels: list[str], train_raw: dict, reshape: dict,
+) -> tuple[dict, dict, dict]:
+    """One test batch, every model. Also returns, per reshaped variant, each
+    model's peak density with that variant's pick in place of the synthetic one
+    (a large gamma squeezes the reshaped scores against 0 / 1 into a spike, so
+    each pick keeps its own y-scale)."""
     test_dir = os.path.join(dataset_dir, "test_scores")
-    y_max = {}
+    y_max, pick_max = {}, {}
     mc_row = _read_row(os.path.join(test_dir, f"batch_{batch_id}_multiclass.csv"))
     matrix = _parse(mc_row["incoming_test_scores"])
     if matrix.ndim != 2 or matrix.shape[1] != len(labels):
@@ -167,9 +206,30 @@ def _batch(dataset_dir: str, batch_id: str, labels: list[str]) -> tuple[dict, di
                 scaled += [c for c, s in ((pos_c, pos), (neg_c, neg)) if s.size >= MIN_SCALE_SAMPLES]
                 entry.update({"nPos": int(pos.size), "nNeg": int(neg.size), "incPos": _pack(pos_c), "incNeg": _pack(neg_c)})
         y_max[label] = max(float(c.max()) for c in scaled)
+
+        # Reshaped picks: the detector's training scores under the gamma the
+        # search chose for this batch (same KDE, same grid as the synthetic pick).
+        incoming_scaled = [c for c in scaled if c is not curves[1] and c is not curves[2]]
+        for variant, by_key in reshape.items():
+            gamma = by_key.get((int(batch_id), label))
+            if gamma is None:
+                continue
+            pick_p, pick_n = reshape_scores(*train_raw[label], gamma)
+            pick_pc, pick_nc = bounded_kde(pick_p), bounded_kde(pick_n)
+            entry.setdefault("reshaped", {})[variant] = {
+                "param": round(gamma, 4),
+                "nSelP": int(pick_p.size),
+                "nSelN": int(pick_n.size),
+                "selP": _pack(pick_pc),
+                "selN": _pack(pick_nc),
+            }
+            pick_max.setdefault(variant, {})[label] = max(
+                float(c.max()) for c in incoming_scaled + [pick_pc, pick_nc]
+            )
         ovr[label] = entry
 
-    return {"id": batch_id, "multiclass": {"n": int(matrix.shape[0]), "curves": [_pack(c) for c in mc_curves]}, "ovr": ovr}, y_max
+    batch = {"id": batch_id, "multiclass": {"n": int(matrix.shape[0]), "curves": [_pack(c) for c in mc_curves]}, "ovr": ovr}
+    return batch, y_max, pick_max
 
 
 def write_score_distributions(dataset_dir: str, out_dir: str, dataset_id: str) -> dict | None:
@@ -183,13 +243,18 @@ def write_score_distributions(dataset_dir: str, out_dir: str, dataset_id: str) -
     batch_ids = _batch_ids(dataset_dir)
     shipped = batch_ids[:SCORE_BATCH_LIMIT]
 
-    training, train_max = _training(dataset_dir, labels)
-    batches, test_max = [], {}
+    training, train_max, train_raw = _training(dataset_dir, labels)
+    reshape = _reshape_trace(dataset_dir)
+    batches, test_max, pick_max = [], {}, {}
     for batch_id in shipped:
-        batch, b_max = _batch(dataset_dir, batch_id, labels)
+        batch, b_max, b_pick_max = _batch(dataset_dir, batch_id, labels, train_raw, reshape)
         batches.append(batch)
         for model, value in b_max.items():
             test_max[model] = max(test_max.get(model, 0.0), value)
+        for variant, by_model in b_pick_max.items():
+            v_max = pick_max.setdefault(variant, {})
+            for model, value in by_model.items():
+                v_max[model] = max(v_max.get(model, 0.0), value)
 
     score_dir = os.path.join(out_dir, "scores", dataset_id)
     os.makedirs(score_dir, exist_ok=True)
@@ -204,6 +269,11 @@ def write_score_distributions(dataset_dir: str, out_dir: str, dataset_id: str) -
                 "yMax": {
                     "training": {m: round(v * 1.08, 3) for m, v in train_max.items()},
                     "test": {m: round(v * 1.08, 3) for m, v in test_max.items()},
+                    # test view with a reshaped variant's pick in place of the synthetic one
+                    "picks": {
+                        variant: {m: round(v * 1.08, 3) for m, v in by_model.items()}
+                        for variant, by_model in pick_max.items()
+                    },
                 },
                 "batchIds": shipped,
                 "nBatchesTotal": len(batch_ids),
@@ -216,4 +286,7 @@ def write_score_distributions(dataset_dir: str, out_dir: str, dataset_id: str) -
         with open(os.path.join(score_dir, f"batch_{index:04d}.json"), "w", encoding="utf-8") as f:
             json.dump({"scale": SCORE_SCALE, **batch}, f, separators=(",", ":"))
 
-    return {"nClasses": len(labels), "nBatches": len(shipped), "nBatchesTotal": len(batch_ids)}
+    out = {"nClasses": len(labels), "nBatches": len(shipped), "nBatchesTotal": len(batch_ids)}
+    if pick_max:  # which picked references the test view can show besides the synthetic one
+        out["picks"] = ["syn", *sorted(pick_max)]
+    return out

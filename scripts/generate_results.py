@@ -25,7 +25,7 @@ in every run, computes:
     scores, under scores/<id>/, flagged as `scores` on the manifest entry
 
   * detector-gated runs only ("detectors" on the EXPERIMENTS entry): per-batch
-    AE box stats per base method x classic/cdt/ibdd/syn variant (all classes
+    AE box stats per base method x classic/cdt/ibdd/syn/gamma variant (all classes
     and per class), and the drift detectors' calibration distances, test
     statistics and per-batch flags (see scripts/drift_detectors.py)
 
@@ -68,8 +68,17 @@ OUT_DIR = os.path.join(ROOT, "results", "generated")
 #          and its syn variant); absent/False leaves the run as-is
 #   detectors drift detectors that gate QuaDapt in this run (<base>_<detector>
 #          quantifiers): adds the `variantBoxes` and `detectors` blocks per
-#          dataset, and switches the UI to the classic/cdt/ibdd/syn palette
+#          dataset, and switches the UI to the classic/cdt/ibdd/syn/gamma palette
 EXPERIMENTS = [
+    {
+        "id": "ours_all_variants",
+        "name": "Ours · all variants",
+        "dir": "ovr_results_all_variants_ours",
+        "layout": "flat",
+        "desc": "Ours datasets, batch size 100 — classic, CDT/IBDD-gated, synthetic and gamma-reshaped QuaDapt",
+        "detectors": ["cdt", "ibdd"],
+        "topline": True,
+    },
     {
         "id": "ours_cdt_ibdd",
         "name": "Ours · CDT/IBDD gated",
@@ -273,7 +282,11 @@ def syn_base(name: str) -> str | None:
 
 # Detector-gated QuaDapt variants: <base>_<detector> (drift -> syn, else base).
 DETECTOR_SUFFIXES = ("cdt", "ibdd")
-VARIANT_ORDER = ["classic", "cdt", "ibdd", "syn"]
+# Reshaped QuaDapt variants: <base>_<suffix> searches power reshapes of the
+# model's own training scores instead of MoSS, on every batch (no gating).
+RESHAPE_SUFFIXES = ("gamma",)
+SUFFIX_VARIANTS = DETECTOR_SUFFIXES + RESHAPE_SUFFIXES
+VARIANT_ORDER = ["classic", "cdt", "ibdd", "syn", "gamma"]
 
 # Native multiclass quantifiers have no OvR variants; the method x family box
 # plot leaves them out (mirrors the experiment repo's ours_distribution_analysis).
@@ -282,24 +295,24 @@ BOX_OUTLIER_CAP = 30
 
 
 def method_variant(name: str) -> str:
-    """classic / cdt / ibdd / syn / topline — mirrored by methodVariant() in
-    src/lib/resultsDerive.js."""
+    """classic / cdt / ibdd / syn / gamma / topline — mirrored by methodVariant()
+    in src/lib/resultsDerive.js."""
     if name.endswith("_topline"):
         return "topline"
-    for det in DETECTOR_SUFFIXES:
-        if name.endswith(f"_{det}"):
-            return det
+    for suffix in SUFFIX_VARIANTS:
+        if name.endswith(f"_{suffix}"):
+            return suffix
     if syn_base(name) is not None:
         return "syn"
     return "classic"
 
 
 def variant_base(name: str) -> str:
-    """ACC_cdt -> ACC, DySyn -> DyS, ACC -> ACC."""
+    """ACC_cdt -> ACC, DyS_gamma -> DyS, DySyn -> DyS, ACC -> ACC."""
     variant = method_variant(name)
     if variant == "syn":
         return syn_base(name)
-    if variant in DETECTOR_SUFFIXES:
+    if variant in SUFFIX_VARIANTS:
         return name[: -len(variant) - 1]
     return name
 
@@ -322,7 +335,7 @@ def box_stats(values: np.ndarray) -> list:
 
 
 def variant_boxes(df: pd.DataFrame, methods: list, classes: list) -> dict:
-    """Per-batch AE box stats for every base method's classic/cdt/ibdd/syn
+    """Per-batch AE box stats for every base method's classic/cdt/ibdd/syn/gamma
     members, over all classes (mean AE per batch) and per OvR class."""
     members = {}
     for m in methods:
@@ -878,6 +891,7 @@ def build_experiment(exp: dict, datasets_meta: dict) -> dict | None:
     print(f"\n=== {exp['id']} ({exp['name']}) — results/{exp['dir']}/ ===")
     manifest = []
     general_records = []
+    variants = set()
     for group, csv_path in sorted(find_result_csvs(raw_dir, exp["layout"])):
         rel = os.path.relpath(csv_path, raw_dir)
         print(f"  {rel} ...", flush=True)
@@ -887,6 +901,7 @@ def build_experiment(exp: dict, datasets_meta: dict) -> dict | None:
         if result is None:
             continue
         dataset, manifest_entry, general_record = result
+        variants.update(m["variant"] for m in dataset["methods"])
         scores = write_score_distributions(os.path.dirname(csv_path), out_dir, dataset["id"])
         if scores:
             manifest_entry["scores"] = scores
@@ -909,15 +924,18 @@ def build_experiment(exp: dict, datasets_meta: dict) -> dict | None:
     print(f"  wrote {len(manifest)} datasets to {out_dir}")
     print(f"  general.json: {len(manifest)} datasets, {joined} joined to datasets.json metadata")
 
-    return index_entry(exp, len(manifest))
+    return index_entry(exp, len(manifest), variants)
 
 
-def index_entry(exp: dict, n_datasets: int) -> dict:
+def index_entry(exp: dict, n_datasets: int, variants: set) -> dict:
     """One experiments.json row; `detectors` only on detector-gated runs (the
-    UI switches to the classic/cdt/ibdd/syn palette on it)."""
+    UI switches to the classic/cdt/ibdd/syn/gamma palette on it). `variants`:
+    the method categories the run has, in VARIANT_ORDER (+ topline)."""
     entry = {"id": exp["id"], "name": exp["name"], "desc": exp["desc"], "nDatasets": n_datasets}
     if exp.get("detectors"):
         entry["detectors"] = exp["detectors"]
+    if variants:  # unknown for runs kept from disk that predate the field
+        entry["variants"] = [v for v in VARIANT_ORDER + ["topline"] if v in variants]
     return entry
 
 
@@ -937,6 +955,11 @@ def main():
     # Keep the runs that were not rebuilt this pass but are already on disk, so
     # a partial run (`generate_results.py ovr_v2`) doesn't drop them from the
     # switcher. EXPERIMENTS order is the display order.
+    index_path = os.path.join(OUT_DIR, "experiments.json")
+    previous = {}
+    if os.path.exists(index_path):
+        with open(index_path, encoding="utf-8") as f:
+            previous = {e["id"]: e for e in json.load(f)}
     index = []
     for exp in EXPERIMENTS:
         if exp["id"] in built:
@@ -946,9 +969,9 @@ def main():
         if os.path.exists(manifest_path):
             with open(manifest_path, encoding="utf-8") as f:
                 n = len(json.load(f))
-            index.append(index_entry(exp, n))
+            index.append(index_entry(exp, n, set(previous.get(exp["id"], {}).get("variants", []))))
 
-    with open(os.path.join(OUT_DIR, "experiments.json"), "w", encoding="utf-8") as f:
+    with open(index_path, "w", encoding="utf-8") as f:
         json.dump(index, f, indent=2)
 
     summary = ", ".join(f"{e['id']} ({e['nDatasets']})" for e in index) or "none"
